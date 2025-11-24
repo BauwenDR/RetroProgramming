@@ -5,4 +5,7 @@
 *.dbg
 *.DBG
 *.nes*
+
 .DS_Store
+.vscode/
+*.kate-swp
