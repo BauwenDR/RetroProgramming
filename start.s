@@ -33,6 +33,25 @@ vblankwait2:
   bit $2002
   bpl vblankwait2
 
+  clear_ppu_memory:
+  ldx #$20
+  ldy #$00
+  sty $2001 ; disable rendering
+  stx $2006 ; set address to $2000
+  sty $2006
+
+  lda #$00 ; A is counter 2
+  ldx #$00 ; X is counter 1
+  ldy #$00 ; Y is 0
+  :
+  sty $2007
+  inx 
+  bne :+
+  adc #$01 ; if X == 256 increment A
+  :
+  cmp #$09
+  bne :-- ; if (A != 9) do it again
+
 main:
 load_palettes:
   lda $2002
