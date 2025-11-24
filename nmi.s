@@ -1,3 +1,5 @@
+loop_counter = $c1
+
 nmi:
     ; save registers
     php ; SR
@@ -10,14 +12,16 @@ nmi:
     ; set vBlank? to 1 (to say a vBlank happened)
     lda #$01 
     sta VBLANK_OCCURED
-
-    ; Increment VBLANK counter
     inc VBLANK_TICK_COUNT
 
     ; enable background + sprites, color emphasis normal
     lda #%00011110
     sta $2001
 
+    lda #$00
+    sta loop_counter
+
+    draw_tile:
     ; get buffer size
     lda VBLANK_BUFFER_SIZE
     and #$0F ; get last 4 bits
@@ -46,17 +50,16 @@ nmi:
     lda VBLANK_BACK_BUFFER+2, y
     sta $2007
 
-    ; set color
-    lda VBLANK_BACK_BUFFER, y
-    and #$C0
-    rol 
-    rol 
+    ; something something colors???
 
     ; decrement buffer size
-    clc 
-    lda VBLANK_BUFFER_SIZE
-    sbc #$01
-    sta VBLANK_BUFFER_SIZE
+    dec VBLANK_BUFFER_SIZE
+
+    inc loop_counter
+    lda loop_counter
+    clc
+    cmp #$0F
+    bne draw_tile
 
     skip_drawing:
 

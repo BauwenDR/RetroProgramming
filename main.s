@@ -22,40 +22,28 @@
 .include "start.s"
 .include "random.s"
 .include "input.s"
+.include "player.s"
 
 forever:
-  jsr galois16
-  ldx RANDOM_SEED+0
-  ldy RANDOM_SEED+1
-
-  lda $0700
+  lda VBLANK_OCCURED
   cmp #$01
-  bne :+
+  bne :++ ; If a VBLANK occured run the code, otherwise skip
+    lda #$00
+    sta VBLANK_OCCURED
 
-  ; set vBlank? to 0
-  lda #$00
-  sta $0700
-  
-  lda #$01
-  jsr push_background_buffer
-
+    lda VBLANK_TICK_COUNT
+    cmp #$08
+    bne :+  ; Only move every 8 frames
+      lda #$00  ; Clear VBLANK count
+      sta VBLANK_TICK_COUNT
+      jsr move_player
+    :
   :
 
   jmp forever
 
 .include "nmi.s"
 .include "pushBackgroundBuffer.s"
-
-hello:
-  .byte $04 ;h
-  .byte $05 ;e
-  .byte $06 ;l
-  .byte $06 ;l
-  .byte $02 ;o
-  .byte $00 ;
-  .byte $01 ;t
-  .byte $02 ;o
-  .byte $03 ;m
 
 palettes:
   ; Background Palette
