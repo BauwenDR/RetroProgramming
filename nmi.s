@@ -1,3 +1,5 @@
+loop_counter = $c1
+
 nmi:
     ; save registers
     php ; SR
@@ -9,22 +11,25 @@ nmi:
 
     ; set vBlank? to 1 (to say a vBlank happened)
     lda #$01 
-    sta VBLANK_OCCURED
-
-    ; Increment VBLANK counter
-    inc VBLANK_TICK_COUNT
-
+    sta $0700
     ; enable background + sprites, color emphasis normal
     lda #%00011110
     sta $2001
 
+    ; update sprites
+    lda #$05 ; first byte of sprite location
+    sta $4014 ; OAMDMA location, read: https://www.nesdev.org/wiki/PPU_registers#OAMDMA
+
+    lda #$00
+    sta loop_counter
+
+    draw_tile:
     ; get buffer size
-    lda VBLANK_BUFFER_SIZE
-    and #$0F ; get last 4 bits
+    lda $0600
 
     ; if 0: skip
     cmp #$00
-    beq skip_drawing
+    beq skip_tile_drawing
 
     sbc #$01 ; decrement A by 1
 
@@ -36,32 +41,33 @@ nmi:
     tay 
 
     ; set ppu address
-    lda VBLANK_BACK_BUFFER, y ; address byte 1
+    lda $0601, y ; address byte 1
     and #$3F
     sta $2006
-    lda VBLANK_BACK_BUFFER+1, y ; address byte 2 (made the address one higher to not have to increment Y)
+    lda $0602, y ; address byte 2 (made the address one higher to not have to increment Y)
     sta $2006
 
     ; set tile
-    lda VBLANK_BACK_BUFFER+2, y
+    lda $0603, y
     sta $2007
 
-    ; set color
-    lda VBLANK_BACK_BUFFER, y
-    and #$C0
-    rol 
-    rol 
-
     ; decrement buffer size
-    clc 
-    lda VBLANK_BUFFER_SIZE
-    sbc #$01
-    sta VBLANK_BUFFER_SIZE
+    dec $0600
 
-    skip_drawing:
+    ; check if we have reached the limit of background tile updates
+    inc loop_counter
+    lda loop_counter
+    cmp #24 ; (this is in decimal) max amount of of tiles updated per frame is 19 due to limited clock cycles
+    bne draw_tile
+
+    skip_tile_drawing:
 
     ; Set background scroll to (0, 0)
-    lda #$00
+    lda $2002 ; reset toggle
+    sta $2006
+    sta $2006
+
+    lda #$00 ; set to (0, 0)
     sta $2005
     sta $2005
 
