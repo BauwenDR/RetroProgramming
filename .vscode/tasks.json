@@ -1,0 +1,35 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Assemble and Link NES",
+        "type": "shell",
+        "command": "ca65",
+        "args": [
+          "main.s",
+          "-g",
+          "-o",
+          "main.o"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "detail": "Assembles an NES project using cc65."
+      },
+      {
+        "label": "Build NES",
+        "type": "shell",
+        "command": "ld65",
+        "args": [
+          "-t", "nes",
+          "-o", "main.nes",
+          "main.o",
+          "--dbgfile", "main.dbg"
+        ],
+        "group": "build",
+        "dependsOn": "Assemble and Link NES",
+        "detail": "Links the NES object file to create a ROM."
+      }
+    ]
+  }
