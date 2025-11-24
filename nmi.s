@@ -9,9 +9,6 @@ nmi:
     tya ; Y
     pha 
 
-    ; set vBlank? to 1 (to say a vBlank happened)
-    lda #$01 
-    sta $0700
     ; enable background + sprites, color emphasis normal
     lda #%00011110
     sta $2001
@@ -24,41 +21,41 @@ nmi:
     sta loop_counter
 
     draw_tile:
-    ; get buffer size
-    lda $0600
+        ; get buffer size
+        lda $0600
 
-    ; if 0: skip
-    cmp #$00
-    beq skip_tile_drawing
+        ; if 0: skip
+        cmp #$00
+        beq skip_tile_drawing
 
-    sbc #$01 ; decrement A by 1
+        sbc #$01 ; decrement A by 1
 
-    ; multiply A by 3
-    sta $C0
-    clc 
-    adc $C0
-    adc $C0
-    tay 
+        ; multiply A by 3
+        sta $C0
+        clc 
+        adc $C0
+        adc $C0
+        tay 
 
-    ; set ppu address
-    lda $0601, y ; address byte 1
-    and #$3F
-    sta $2006
-    lda $0602, y ; address byte 2 (made the address one higher to not have to increment Y)
-    sta $2006
+        ; set ppu address
+        lda $0601, y ; address byte 1
+        and #$3F
+        sta $2006
+        lda $0602, y ; address byte 2 (made the address one higher to not have to increment Y)
+        sta $2006
 
-    ; set tile
-    lda $0603, y
-    sta $2007
+        ; set tile
+        lda $0603, y
+        sta $2007
 
-    ; decrement buffer size
-    dec $0600
+        ; decrement buffer size
+        dec $0600
 
-    ; check if we have reached the limit of background tile updates
-    inc loop_counter
-    lda loop_counter
-    cmp #24 ; (this is in decimal) max amount of of tiles updated per frame is 19 due to limited clock cycles
-    bne draw_tile
+        ; check if we have reached the limit of background tile updates
+        inc loop_counter
+        lda loop_counter
+        cmp #24 ; (this is in decimal) max amount of of tiles updated per frame is 19 due to limited clock cycles
+        bne draw_tile
 
     skip_tile_drawing:
 
@@ -70,6 +67,11 @@ nmi:
     lda #$00 ; set to (0, 0)
     sta $2005
     sta $2005
+
+    ; set vBlank? to 1 (to say a vBlank happened)
+    lda #$01 
+    sta VBLANK_OCCURED
+    inc VBLANK_TICK_COUNT
 
     ; restore registers
     pla ; Y
