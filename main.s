@@ -27,14 +27,14 @@
 forever:
   lda VBLANK_OCCURED
   cmp #$01
-  bne :++ ; If a VBLANK occured run the code, otherwise skip
-    lda #$00
+  bne :++ ; If (VBLANK_OCCURED)
+    lda #$00  ; VBLANK_OCCURED = false
     sta VBLANK_OCCURED
 
     lda VBLANK_TICK_COUNT
     cmp #$08
-    bne :+  ; Only move every 8 frames
-      lda #$00  ; Clear VBLANK count
+    bcc :+  ; IF(VBLANK_TICK_COUNT >= 8)
+      lda #$00  ; VBLANK_TICK_COUNT = 0
       sta VBLANK_TICK_COUNT
       jsr move_player
     :

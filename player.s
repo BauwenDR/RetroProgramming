@@ -31,12 +31,6 @@ move_player:
     ldx #$20
     ldy PLAYER_LOC
     iny
-    jsr push_background_buffer
-
-    lda #$06
-    ldx #$20
-    ldy PLAYER_LOC
-    iny
     iny
     jsr push_background_buffer
 
