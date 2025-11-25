@@ -10,7 +10,7 @@
             "dbgPath": "${workspaceFolder}/main.dbg",
             "program": "${workspaceFolder}/launch-mesen.sh",
             "sourcePath": "${workspaceFolder}/",
-            "stopOnEntry": true,
+            "stopOnEntry": false,
             "resetOnEntry": true
         }
     ]

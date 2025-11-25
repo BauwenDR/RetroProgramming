@@ -21,8 +21,14 @@
 
 .include "start.s"
 .include "random.s"
-.include "input.s"
-.include "player.s"
+
+;; Wait for first VBLANK to have occured
+:
+lda VBLANK_OCCURED
+cmp #$01
+bne :-
+jsr init_player
+; jsr init_draw_player
 
 forever:
   lda VBLANK_OCCURED
@@ -30,6 +36,8 @@ forever:
   bne :++ ; If (VBLANK_OCCURED)
     lda #$00  ; VBLANK_OCCURED = false
     sta VBLANK_OCCURED
+
+    jsr read_input
 
     lda VBLANK_TICK_COUNT
     cmp #$08
@@ -44,6 +52,9 @@ forever:
 
 .include "nmi.s"
 .include "pushBackgroundBuffer.s"
+
+.include "player.s"
+.include "input.s"
 
 palettes:
   ; Background Palette
