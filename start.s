@@ -33,7 +33,7 @@ vblankwait2:
   bit $2002
   bpl vblankwait2
 
-  clear_ppu_memory:
+clear_ppu_memory:
   ldx #$20
   ldy #$00
   sty $2001 ; disable rendering
@@ -47,7 +47,7 @@ vblankwait2:
   sty $2007
   inx 
   bne :+
-  adc #$01 ; if X == 256 increment A
+    adc #$01 ; if X == 256 increment A
   :
   cmp #$09
   bne :-- ; if (A != 9) do it again
