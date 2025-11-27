@@ -8,8 +8,7 @@ push_background_buffer:
     tya ; push y to stack
     pha  
     lda VBLANK_BUFFER_SIZE
-    and #$0F ; get last 4 bits
-    cmp #$0F ; check if full
+    cmp #$2A ; check if full (42 tiles)
     beq :+
 
     ; multiply A by 3
