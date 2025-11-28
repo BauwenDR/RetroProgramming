@@ -1,3 +1,6 @@
+LOCAL = $01
+NMI_LOCAL = $C0
+
 ;; PPU
 
 
