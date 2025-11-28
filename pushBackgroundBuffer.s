@@ -12,9 +12,9 @@
     beq :+
 
     ; multiply A by 3
-    sta NMI_LOCAL + 0
+    sta $C0
     rol 
-    adc NMI_LOCAL + 0
+    adc $C0
 
     tay 
     txa 
