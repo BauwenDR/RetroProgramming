@@ -1,6 +1,6 @@
 loop_counter = $c1
 
-nmi:
+.proc nmi
     ; save registers
     php ; SR
     pha ; A
@@ -61,6 +61,7 @@ nmi:
 
     ; Set background scroll to (0, 0)
     lda $2002 ; reset toggle
+    lda #$00 
     sta $2006
     sta $2006
 
@@ -81,3 +82,4 @@ nmi:
     pla ; A
     plp ; SR
     rti
+.endproc
