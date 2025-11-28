@@ -40,3 +40,9 @@ PLAYER_BODY_4 = $0238   ; Length of body max 16 bytes
 
 ;; Random Numbers
 RANDOM_SEED = $BE  ; Set memory address for rng to $2 and #3 (as it used 16 bits)
+
+;; Sprites
+PLAYER_HEAD_SPRITE_1 = $0500
+PLAYER_HEAD_SPRITE_2 = $0500 + 4
+PLAYER_HEAD_SPRITE_3 = $0500 + 8
+PLAYER_HEAD_SPRITE_4 = $0500 + 12
