@@ -307,16 +307,14 @@
     lda PLAYER_LENGTH_1 ; get first 2 bits
     and #%00000011
     ror 
-    ror 
-    ror 
     sta $01
 
     lda PLAYER_HEAD_1 ; get last 3 bits
     and #%11100000
-    ror 
-    ror 
     
     ora $01 ; merge them
+    ror 
+    ror 
 
     sta PLAYER_HEAD_SPRITE_1 ; store y position
 
