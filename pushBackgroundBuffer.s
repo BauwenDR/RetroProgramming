@@ -3,7 +3,7 @@
 ; A is tile index
 ; destroys all register data
 
-push_background_buffer:
+.proc push_background_buffer
     pha ; push a to stack (free a register)
     tya ; push y to stack
     pha  
@@ -36,3 +36,4 @@ push_background_buffer:
 
     :
     rts
+.endproc
