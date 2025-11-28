@@ -189,15 +189,15 @@
         sta PLAYER_BODY_1,X
     input_end:
 
-    ; Clear last head position
-    ldy PLAYER_HEAD_1
-    lda PLAYER_LENGTH_1
-    and #03
-    clc
-    adc #$20
-    tax
-    lda #$00; Draw tile for head
-    jsr push_background_buffer
+    ; ; Clear last head position
+    ; ldy PLAYER_HEAD_1
+    ; lda PLAYER_LENGTH_1
+    ; and #03
+    ; clc
+    ; adc #$20
+    ; tax
+    ; lda #$00; Draw tile for head
+    ; jsr push_background_buffer
 
     ; Move player head
     lda NEW_MOVE_DIR
@@ -291,18 +291,59 @@
     :
     end_move_switch:
 
-    ; Draw head in new position
-    ldy PLAYER_HEAD_1
-    lda PLAYER_LENGTH_1
-    and #03
-    clc
-    adc #$20
-    tax
-    lda #$04; Draw tile for head
-    jsr push_background_buffer
+    ; ; Draw head in new position
+    ; ldy PLAYER_HEAD_1
+    ; lda PLAYER_LENGTH_1
+    ; and #03
+    ; clc
+    ; adc #$20
+    ; tax
+    ; lda #$04; Draw tile for head
+    ; jsr push_background_buffer
+
+    clc 
+
+    ; calculate y position
+    lda PLAYER_LENGTH_1 ; get first 2 bits
+    and #%00000011
+    ror 
+    ror 
+    ror 
+    sta $01
+
+    lda PLAYER_HEAD_1 ; get last 3 bits
+    and #%11100000
+    ror 
+    ror 
+    
+    ora $01 ; merge them
+
+    sta PLAYER_HEAD_SPRITE_1 ; store y position
+
+    clc 
+
+    ; calculate x position
+    lda PLAYER_HEAD_1
+    and #%00011111
+
+    sta $0A ; debug store
+
+    rol ; multiply by 8
+    rol 
+    rol 
+
+    sta PLAYER_HEAD_SPRITE_1 + 3 ; store x position
+
+    ; set tile index
+    lda #$04 ; default for now
+    sta PLAYER_HEAD_SPRITE_1 + 1 ; store tile index
+
+    ; set attributes (no flipping x 2, in front of background, unimplemented x 3, palette x 2)
+    lda #%00000000
+    sta PLAYER_HEAD_SPRITE_1 + 2 ; store attributes
 
 
-    ; Draw tale
+    ; Draw tale (it's "tail" btw)
 
     ; Remove after tale
 
