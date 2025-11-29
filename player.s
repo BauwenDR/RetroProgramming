@@ -37,7 +37,7 @@
 ;; Moves player by 1 tile
 .proc move_player
     ; These addresses may be overriden outside of this function
-    LENGH = $01
+    LENGTH = $01
     BYTE_SHIFT_LENGTH = $02
     LENGTH_MOD = $03
     BYTE_LENGTH = $04
@@ -51,7 +51,7 @@
     lda PLAYER_LENGTH_1
     lsr
     lsr
-    sta LENGH
+    sta LENGTH
 
     ; Store amount of bytes the body currently takes in $02 and $03
     lsr
@@ -88,7 +88,7 @@
     shirt_loop_end:
 
     ; Calculate bit offset for next position and store in $02
-	lda LENGH
+	lda LENGTH
 	sec
     bit_offset_modulus: ; Player length % 4
         sbc #$04
@@ -189,17 +189,74 @@
         sta PLAYER_BODY_1,X
     input_end:
 
-    ; ; Clear last head position
-    ; ldy PLAYER_HEAD_1
-    ; lda PLAYER_LENGTH_1
-    ; and #03
-    ; clc
-    ; adc #$20
-    ; tax
-    ; lda #$00; Draw tile for head
-    ; jsr push_background_buffer
+    ; Draw body on last head location ---------------------------------------------------------------------------------------------------------------------------------------------------------
+    ldy PLAYER_HEAD_1
+    lda PLAYER_LENGTH_1
+    and #03
+    clc 
+    adc #$20
+    tax
+    lda NEW_MOVE_DIR
+    cmp LAST_MOVE_DIR
 
-    ; Move player head
+    bne :+ 
+    ; if LAST_MOVE_DIR == NEW_MOVE_DIR (straight)
+        clc 
+        and #%00000010
+        ror 
+        adc #$05
+        jmp finish_drawing_body
+
+    : ; if LAST_MOVE_DIR != NEW_MOVE_DIR (corner)
+        asl 
+        asl 
+        ora LAST_MOVE_DIR ; merge NEW + LAST
+        
+        cmp #%00000011
+        beq :+
+        cmp #%00001001
+        beq :+
+        jmp :++
+        :
+            lda #$07
+            jmp finish_drawing_body
+        : 
+        
+        cmp #%00000111
+        beq :+
+        cmp #%00001000
+        beq :+
+        jmp:++
+        :
+            lda #$08
+            jmp finish_drawing_body
+        :
+
+        cmp #%00000010
+        beq :+
+        cmp #%00001101
+        beq :+
+        jmp:++
+        :
+            lda #$09
+            jmp finish_drawing_body
+        :
+
+        cmp #%00001100
+        beq :+
+        cmp #%00000110
+        beq :+
+        jmp:++
+        :
+            lda #$0A
+            jmp finish_drawing_body
+        :
+        lda #$00
+
+    finish_drawing_body:
+    jsr push_background_buffer
+
+    ; Move player head -------------------------------------------------------------------------------------------------------------------------------------------------------------
     lda NEW_MOVE_DIR
     cmp #$00    ; Right
     bne :++
@@ -291,54 +348,46 @@
     :
     end_move_switch:
 
-    ; ; Draw head in new position
-    ; ldy PLAYER_HEAD_1
-    ; lda PLAYER_LENGTH_1
-    ; and #03
-    ; clc
-    ; adc #$20
-    ; tax
-    ; lda #$04; Draw tile for head
-    ; jsr push_background_buffer
-
+    ; ; Draw head (as a sprite) in new position -----------------------------------------------------------------------------------------------------------------------------------------
     clc 
 
     ; calculate y position
     lda PLAYER_LENGTH_1 ; get first 2 bits
     and #%00000011
     ror 
-    sta $01
+    sta LENGTH
 
     lda PLAYER_HEAD_1 ; get last 3 bits
     and #%11100000
     
-    ora $01 ; merge them
+    ora LENGTH ; merge them
     ror 
     ror 
+
+    ; sprites render one pixel below bg tiles at the same location
+    sbc #$00 ; subtract one (yes, I know it says 0, just trust me bro)
 
     sta PLAYER_HEAD_SPRITE_1 ; store y position
-
-    clc 
 
     ; calculate x position
     lda PLAYER_HEAD_1
     and #%00011111
 
-    sta $0A ; debug store
-
-    rol ; multiply by 8
-    rol 
-    rol 
+    asl ; multiply by 8
+    asl 
+    asl 
 
     sta PLAYER_HEAD_SPRITE_1 + 3 ; store x position
 
     ; set tile index
-    lda #$04 ; default for now
+    lda NEW_MOVE_DIR
+    clc 
+    adc #$01
     sta PLAYER_HEAD_SPRITE_1 + 1 ; store tile index
 
-    ; set attributes (no flipping x 2, in front of background, unimplemented x 3, palette x 2)
-    lda #%00000000
-    sta PLAYER_HEAD_SPRITE_1 + 2 ; store attributes
+    ; ; set attributes (no flipping x 2, in front of background, unimplemented x 3, palette x 2)
+    ; lda #%00000000
+    ; sta PLAYER_HEAD_SPRITE_1 + 2 ; store attributes
 
 
     ; Draw tale (it's "tail" btw)
