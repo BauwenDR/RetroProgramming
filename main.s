@@ -64,10 +64,10 @@ palettes:
   .byte $1B, $0C, $11, $3C
 
   ; Sprite Palette
-  .byte $0f, $20, $00, $00
-  .byte $0f, $00, $00, $00
-  .byte $0f, $00, $00, $00
-  .byte $0f, $00, $00, $00
+  .byte $0f, $18, $29, $38
+  .byte $0f, $05, $16, $36
+  .byte $0f, $14, $25, $35
+  .byte $0f, $0C, $11, $3C
 
 ; Character memory
 .segment "CHARS"
