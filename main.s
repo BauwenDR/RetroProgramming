@@ -45,6 +45,7 @@ forever:
       lda #$00  ; VBLANK_TICK_COUNT = 0
       sta VBLANK_TICK_COUNT
       jsr move_player
+      jsr reset_input
     :
   :
 

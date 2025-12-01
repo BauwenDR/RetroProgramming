@@ -12,7 +12,6 @@ VBLANK_FRONT_BUFFER = $0680
 ;; Input
 JOYPAD1 = $4016 ; Address for controller one, using x register to read controller 2
 JOYPAD2 = $4017 ; Address for controller one, using x register to read controller 2
-FOUR_SCORE_MULTIPLEX = $60
 
 CONTROLLER1 = $0400
 CONTROLLER2 = $0401
