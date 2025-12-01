@@ -2,7 +2,7 @@
 .proc init_player
     lda #$02            ; (2, 0)
     sta PLAYER_HEAD_1   
-    lda #$18            ; Length of 3, plus 2 0 bits for player head location
+    lda #$1C            ; Length of 3, plus 2 0 bits for player head location
     sta PLAYER_LENGTH_1
 
     ; Load in body
@@ -60,6 +60,29 @@
     sta BYTE_LENGTH
     ldx #$00
 
+    ; Calculate bit offset for next position and store in $02
+    lda LENGTH
+    and #$03
+    sta LENGTH_MOD
+
+    lda #$04    ; Calcuate amount of times to shift right
+    sbc LENGTH_MOD
+    sta SHIFT_RIGHT_COUNT
+
+    ; Calculate last move dir
+    ldx BYTE_LENGTH
+    lda PLAYER_BODY_1,X ; Load last byte of body into A
+
+    ldy SHIFT_RIGHT_COUNT
+    :   ; Shift right untill the 2 lsb's are last direction
+        lsr
+        lsr
+        dey
+        bne :-
+
+    and #$03    ; Extract last 2 bits
+    sta LAST_MOVE_DIR
+
     ; Shifting player body
     asl PLAYER_BODY_1   ; Discard the first 2 bytes (last location)
     asl PLAYER_BODY_1
@@ -71,47 +94,23 @@
     beq shift_loop_end
 
     shift_loop:
-        lda PLAYER_BODY_1,X   ; Load previous byte into A
+        lda PLAYER_BODY_1-1,X   ; Load previous byte into A
 
-        asl PLAYER_BODY_1+1,X     ; Shift first bit out
+        asl PLAYER_BODY_1,X     ; Shift first bit out
         bcc :+                  ; If bit was one set it for last byte
             ora #$02
         :                       
-        asl PLAYER_BODY_1+1,X     ; Shift out second bit and set for last byte 
+        asl PLAYER_BODY_1,X     ; Shift out second bit and set for last byte 
         bcc :+
             ora #$01
         :
 
-        sta PLAYER_BODY_1,X
+        sta PLAYER_BODY_1-1,X
 
         inx
         dec BYTE_SHIFT_LENGTH
         bne shift_loop
     shift_loop_end:
-
-    ; Calculate bit offset for next position and store in $02
-    lda LENGTH
-    and #$03
-    sta LENGTH_MOD
-
-    lda #$04    ; Calcuate amount of times to shift right (and store in $04)
-    sbc LENGTH_MOD
-    sta SHIFT_RIGHT_COUNT
-
-    ; Calculate last move dir
-    ldx BYTE_LENGTH
-    lda PLAYER_BODY_1,X ; Load last byte of body into A
-
-    ldy SHIFT_RIGHT_COUNT
-    iny
-    :   ; Shift right untill the 2 lsb's are last direction
-        lsr
-        lsr
-        dey
-        bne :-
-
-    and #$03    ; Extract last 2 bits
-    sta LAST_MOVE_DIR
 
     ; Moving the head
     lda CONTROLLER1
@@ -127,6 +126,7 @@
             sta NEW_MOVE_DIR
             jmp end_input_switch
         :
+
         lda #$02    ; Left
         bit CONTROLLER_FAST
         beq :+
@@ -134,6 +134,7 @@
             sta NEW_MOVE_DIR
             jmp end_input_switch
         :
+
         lda #$04    ; Down
         bit CONTROLLER_FAST
         beq :+
@@ -141,9 +142,9 @@
             sta NEW_MOVE_DIR
             jmp end_input_switch
         :
+
         lda #$08    ; Up
         bit CONTROLLER_FAST
-
         beq :+
             lda #$03
             sta NEW_MOVE_DIR
@@ -151,38 +152,32 @@
         :
         end_input_switch:
 
-        ; When new input is opposide of old input go to_input
+        ; When new input is opposide of old input go to no_input
         ; TODO
-
         lda NEW_MOVE_DIR
+        ldx BYTE_LENGTH
         ldy SHIFT_RIGHT_COUNT     ; Shift back n-1 times
-        dey
         :
             asl
             asl
             dey
-            beq :-
-        dey
+            bne :-
 
         ora PLAYER_BODY_1,X
         sta PLAYER_BODY_1,X
 
         jmp input_end
     no_input:           ; No Button was pressed, continue in same direction
-        ; If modulo was 0
-        ; TODO
-
-        ; else
         lda LAST_MOVE_DIR
         sta NEW_MOVE_DIR
+
+        ldx BYTE_LENGTH
         ldy SHIFT_RIGHT_COUNT     ; Shift back n-1 times
-        dey
         :
             asl
             asl
             dey
-            beq :-
-        dey
+            bne :-
 
         ora PLAYER_BODY_1,X
         sta PLAYER_BODY_1,X

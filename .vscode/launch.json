@@ -5,6 +5,7 @@
             "type": "alchemy65",
             "request": "launch",
             "preLaunchTask": "Build NES",
+            "suppressMultipleSessionWarning": false,
             "name": "Debug rom with mesen",
             "romPath": "${workspaceFolder}/main.nes",
             "dbgPath": "${workspaceFolder}/main.dbg",
