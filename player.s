@@ -2,7 +2,7 @@
 .proc init_player
     lda #$02            ; (2, 0)
     sta PLAYER_HEAD_1   
-    lda #$0C            ; Length of 3, plus 2 0 bits for player head location
+    lda #$1C            ; Length of 3, plus 2 0 bits for player head location
     sta PLAYER_LENGTH_1
 
     ; Load in body
@@ -64,28 +64,30 @@
     asl PLAYER_BODY_1   ; Discard the first 2 bytes (last location)
     asl PLAYER_BODY_1
 
-    lda #$00    ; Skip loop if amount of bytes is 1 ($02 == 0)
-    bit BYTE_SHIFT_LENGTH
-    beq shirt_loop_end
+    ; lda #$00    ; Skip loop if amount of bytes is 1 ($02 == 0)
+    ; bit BYTE_SHIFT_LENGTH
+    lda BYTE_SHIFT_LENGTH
+    cmp #$00
+    beq shift_loop_end
 
     shift_loop:
-       lda PLAYER_BODY_1-1,X    ; Load previous byte into A
+        lda PLAYER_BODY_1,X   ; Load previous byte into A
 
-        asl PLAYER_BODY_1,X     ; Shift first bit out
+        asl PLAYER_BODY_1+1,X     ; Shift first bit out
         bcc :+                  ; If bit was one set it for last byte
             ora #$02
         :                       
-        asl PLAYER_BODY_1,X     ; Shift out second bit and set for last byte 
+        asl PLAYER_BODY_1+1,X     ; Shift out second bit and set for last byte 
         bcc :+
             ora #$01
         :
 
-        sta PLAYER_BODY_1-1,X
+        sta PLAYER_BODY_1,X
 
         inx
         dec BYTE_SHIFT_LENGTH
         bne shift_loop
-    shirt_loop_end:
+    shift_loop_end:
 
     ; Calculate bit offset for next position and store in $02
 	lda LENGTH
