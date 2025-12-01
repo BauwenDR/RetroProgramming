@@ -25,13 +25,14 @@
         sta PLAYER_HEAD,x
 
         ldx OFFSET ;loads the right offset into x for the right body part
-        lda #$0C            ; Length of 3, plus 2 0 bits for player head location
+        lda #$00            ; Length of 3, plus 2 0 bits for player head location
         sta PLAYER_LENGTH,x
 
         ; Load in body
         ldx OFFSET
-        lda #$00           ; All 3 facing richt
+        lda #%10101010           ; All 3 facing down
         sta PLAYER_BODY,x
+        sta PLAYER_BODY + 1,x
         
         lda OFFSET
         clc
@@ -102,11 +103,18 @@
         ; Store player length in $01
         ldx OFFSET ;loads the right offset into x for the right snake
         lda PLAYER_LENGTH,x
-        lsr
-        lsr
+        lsr 
+        lsr 
+        adc #$01
         sta LENGTH
+        cmp #$02
+        bpl :+
+            rts ; return if size is smaller then 2
+        :
 
         ; Store amount of bytes the body currently takes in $02 and $03
+        sec 
+        sbc #$01
         lsr
         lsr
         sta BYTE_SHIFT_LENGTH
@@ -116,33 +124,44 @@
         ; Calculate bit offset for next position and store in $02
         lda LENGTH
         and #$03
+        cmp #$00
+        bne :+
+            lda #$04
+        :
         sta LENGTH_MOD
 
         lda #$04    ; Calcuate amount of times to shift right (and store in $04)
+        sec 
         sbc LENGTH_MOD
         sta SHIFT_RIGHT_COUNT
+        cmp #$00
 
         ; Calculate last move dir
         lda BYTE_LENGTH
-        clc
+        clc 
         adc OFFSET
-        tax
+        tax 
         lda PLAYER_BODY,x ; Load last byte of body into A
 
         ldy SHIFT_RIGHT_COUNT
+        cpy #$00
+        beq :++
         :   ; Shift right untill the 2 lsb's are last direction
             lsr
             lsr
             dey
             bne :-
-
+        :
         and #$03    ; Extract last 2 bits
         sta LAST_MOVE_DIR
 
+        txa 
+
         ; Shifting player body
-        ldy OFFSET
+        ldx OFFSET
         asl PLAYER_BODY,x   ; Discard the first 2 bytes (last location)
         asl PLAYER_BODY,x
+        inx 
 
         ; lda #$00    ; Skip loop if amount of bytes is 1 ($02 == 0)
         ; bit BYTE_SHIFT_LENGTH
@@ -255,12 +274,14 @@
 
             lda NEW_MOVE_DIR
             ldy SHIFT_RIGHT_COUNT    ; Shift back n-1 times
+            cpy #$00
+            beq :++
             :
                 asl
                 asl
                 dey
                 bne :-
-
+            :
             ora PLAYER_BODY,x
             sta PLAYER_BODY,x
 
@@ -273,20 +294,20 @@
 
             lda LAST_MOVE_DIR
             sta NEW_MOVE_DIR
-
             ldy SHIFT_RIGHT_COUNT     ; Shift back n-1 times
+            cpy #$00
+            beq :++
             :
                 asl
                 asl
                 dey
                 bne :-
-
-            ora PLAYER_BODY,X
-            sta PLAYER_BODY,X
+            :
+            ora PLAYER_BODY,x
+            sta PLAYER_BODY,x
         input_end:
         
-        ldx CONTROLLER_OFFSET
-        lda OFFSET  ;loads the right offset into x for the right snake 
+        ldx OFFSET  ;loads the right offset into x for the right snake 
         ; Draw body on last head location ---------------------------------------------------------------------------------------------------------------------------------------------------------
         ldy PLAYER_HEAD ,x
         lda PLAYER_LENGTH,x
@@ -495,78 +516,31 @@
         adc #$01
         sta PLAYER_HEAD_SPRITE + 1,y ; store tile index
 
-        ; ; set attributes (no flipping x 2, in front of background, unimplemented x 3, palette x 2)
-        ; lda #%00000000
-        ; sta PLAYER_HEAD_SPRITE_1 + 2 ; store attributes
 
+        .include "draw_tail.s"
 
+        ; move the other 3 players ----------------------------------------------------------------------------------------------------------------------------------------------------------
+        lda OFFSET
+        clc
+        adc #$12
+        sta OFFSET
 
-    ; Draw tale (it's "tail" btw) -------------------------------------------------------------------------------------------------------------------------------------------------------
-    TAIL_BYTE = $0C
-    TAIL_POSITION = $0D ; 2 bytes
+        lda CONTROLLER_OFFSET
+        clc
+        adc #$01
+        sta CONTROLLER_OFFSET
 
-    ; calculate the offset
-    clc 
-    lda OFFSET
-    adc BYTE_LENGTH
-    tax 
+        lda SPRITE_OFFSET
+        clc
+        adc #$04
+        sta SPRITE_OFFSET
 
-    ; get all values for the loop
-    ldy LENGTH_MOD
-    lda PLAYER_HEAD_SPRITE_1,x
-    sta TAIL_BYTE
-    
-    :
-    cpy #$04
-    beq :+
-        lsr TAIL_BYTE
-        lsr TAIL_BYTE
-        iny 
-        jmp :-
-    :
-
-    lda TAIL_BYTE
-    and #$03
-    
-    cmp #$00
-    bne :+
-
-    :
-    cmp #$01
-    bne :+
-
-    :
-    cmp #$02
-    bne :+
-
-    :
-    cmp #$03
-    bne :+
-
-    :
-
-
-    lda OFFSET
-    clc
-    adc #$12
-    sta OFFSET
-
-    lda CONTROLLER_OFFSET
-    clc
-    adc #$01
-    sta CONTROLLER_OFFSET
-
-    lda SPRITE_OFFSET
-    clc
-    adc #$04
-    sta SPRITE_OFFSET
-
-    lda OFFSET
-    clc
-    cmp #$38
-    bcs :+
-    jsr player_loop
-    :
+        lda OFFSET
+        clc
+        cmp #$38
+        bcs :+
+            jsr player_loop
+        :
 
     rts
 .endproc
