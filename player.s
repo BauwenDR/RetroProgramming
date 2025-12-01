@@ -2,7 +2,7 @@
 .proc init_player
     lda #$02            ; (2, 0)
     sta PLAYER_HEAD_1   
-    lda #$1C            ; Length of 3, plus 2 0 bits for player head location
+    lda #$18            ; Length of 3, plus 2 0 bits for player head location
     sta PLAYER_LENGTH_1
 
     ; Load in body
@@ -90,12 +90,8 @@
     shift_loop_end:
 
     ; Calculate bit offset for next position and store in $02
-	lda LENGTH
-	sec
-    bit_offset_modulus: ; Player length % 4
-        sbc #$04
-		bcs bit_offset_modulus
-		adc #$04
+    lda LENGTH
+    and #$03
     sta LENGTH_MOD
 
     lda #$04    ; Calcuate amount of times to shift right (and store in $04)
@@ -107,11 +103,12 @@
     lda PLAYER_BODY_1,X ; Load last byte of body into A
 
     ldy SHIFT_RIGHT_COUNT
+    iny
     :   ; Shift right untill the 2 lsb's are last direction
         lsr
         lsr
         dey
-        beq :-
+        bne :-
 
     and #$03    ; Extract last 2 bits
     sta LAST_MOVE_DIR
