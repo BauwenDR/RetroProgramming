@@ -4,7 +4,6 @@
     ; set attributes (no flipping x 2, in front of background, unimplemented x 3, palette x 2)
     lda #%00000000
     sta PLAYER_HEAD_SPRITE_1 + 2 ; store attributes
-    sta PLAYER_TAIL_SPRITE_1 + 2
 
     lda #%00000001
     sta PLAYER_HEAD_SPRITE_2 + 2 ; store attributes
