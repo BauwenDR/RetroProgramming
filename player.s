@@ -104,6 +104,7 @@
         lda PLAYER_LENGTH,x
         lsr 
         lsr 
+        clc 
         adc #$01
         sta LENGTH
         cmp #$02
