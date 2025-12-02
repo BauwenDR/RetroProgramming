@@ -23,10 +23,10 @@
 .include "random.s"
 
 ;; Wait for first VBLANK to have occured
-:
+vblank_wait:
 lda VBLANK_OCCURED
 cmp #$01
-bne :-
+bne vblank_wait
 jsr init_player
 ; jsr init_draw_player
 
