@@ -28,7 +28,6 @@ lda VBLANK_OCCURED
 cmp #$01
 bne vblank_wait
 jsr init_player
-; jsr init_draw_player
 
 forever:
   lda VBLANK_OCCURED

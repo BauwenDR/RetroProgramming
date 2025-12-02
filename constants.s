@@ -26,6 +26,10 @@ PLAYER_HEAD = $0200
 PLAYER_LENGTH = $0201 ; Split 6 msb lengh, 2 lsb part of head
 PLAYER_BODY = $0202   ; Length of body max 16 bytes
 
+PLAYER_HEAD_1 = $0200
+PLAYER_LENGTH_1 = $0201 ; Split 6 msb lengh, 2 lsb part of head
+PLAYER_BODY_1 = $0202   ; Length of body max 16 bytes
+
 PLAYER_HEAD_2 = $0212
 PLAYER_LENGTH_2 = $0213 ; Split 6 msb lengh, 2 lsb part of head
 PLAYER_BODY_2 = $0214   ; Length of body max 16 bytes

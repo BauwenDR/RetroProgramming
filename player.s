@@ -1,81 +1,75 @@
 ;; Initialises player memory (hardcoded values)
+;; The players are spawned 1 position further back as we do not draw them in the original spot.
+;; The first time we move the players will be the first time we draw them
 .proc init_player
-    
-    ; set attributes (no flipping x 2, in front of background, unimplemented x 3, palette x 2)
+    ; set sprite attributes (no flipping x 2, in front of background, unimplemented x 3, palette x 2)    
+
+    ;; Player 1
+    ; Head sprite
     lda #%00000000
     sta PLAYER_HEAD_SPRITE_1 + 2 ; store attributes
 
+    ; Head + Length
+    lda #$01                     ; (2, 0)
+    sta PLAYER_HEAD_1
+    lda #$08                     ; Length of 3, plus 2 0 bits for player head location
+    sta PLAYER_LENGTH_1
+
+    ; Load in body
+    lda #%00000000               ; All 3 facing right
+    sta PLAYER_BODY_1
+    sta PLAYER_BODY_1 + 1
+
+    ; Player 2
+    ; Head sprite
     lda #%00000001
     sta PLAYER_HEAD_SPRITE_2 + 2 ; store attributes
 
+    ; Head + Length
+    lda #$3F                     ; (31, 2)
+    sta PLAYER_HEAD_2
+    lda #$08                     ; Length of 3, plus 2 0 bits for player head location
+    sta PLAYER_LENGTH_2
+
+    ; Load in body
+    lda #%10101010               ; All 3 facing down
+    sta PLAYER_BODY_2
+    sta PLAYER_BODY_2 + 1
+
+    ; Player 3
+    ; Head sprite
     lda #%00000010
     sta PLAYER_HEAD_SPRITE_3 + 2 ; store attributes
 
+    ; Head + Length
+    lda #$BE                     ; (31, 29)
+    sta PLAYER_HEAD_3
+    lda #$0B                     ; Length of 3, plus 2 0 bits for player head location
+    sta PLAYER_LENGTH_3
+
+    ; Load in body
+    lda #%01010101               ; All 3 facing left
+    sta PLAYER_BODY_3
+    sta PLAYER_BODY_3 + 1
+
+    ; Player 4
+    ; Head sprite
     lda #%00000011
     sta PLAYER_HEAD_SPRITE_4 + 2 ; store attributes
 
-    OFFSET = $01
-    lda #$00
-    sta OFFSET
-    player_loop:
+    ; Head + Length
+    lda #$80                     ; (0, 29)
+    sta PLAYER_HEAD_4
+    lda #$0B                     ; Length of 3, plus 2 0 bits for player head location
+    sta PLAYER_LENGTH_4
+
+    ; Load in body
+    lda #%11111111               ; All 3 facing up
+    sta PLAYER_BODY_4
+    sta PLAYER_BODY_4 + 1
         
-        ldx OFFSET ;loads the right offset into x for the right body part ;head
-        lda #$02            ; (2, 0)
-        sta PLAYER_HEAD,x
-
-        ldx OFFSET ;loads the right offset into x for the right body part
-        lda #$00            ; Length of 3, plus 2 0 bits for player head location
-        sta PLAYER_LENGTH,x
-
-        ; Load in body
-        ldx OFFSET
-        lda #%10101010           ; All 3 facing down
-        sta PLAYER_BODY,x
-        sta PLAYER_BODY + 1,x
-        
-        lda OFFSET
-        clc
-        adc #$12
-        sta OFFSET
-
-        lda OFFSET
-        clc
-        cmp #$38
-        bcc player_loop
     rts
 .endproc
-
-
-;; Draws initial location of player (hardcoded values)
-.proc init_draw_player
-    OFFSET = $01
-    lda #$00
-    sta OFFSET
-    player_loop:
-
-        lda #$00 
-        ldx #$20
-        ldy #$02
-        jsr push_background_buffer
-
-        lda #$06
-        ldx #$20
-        ldy #$01
-        jsr push_background_buffer
-
-        lda #$0A
-        ldx #$20
-        ldy #$00
-        jsr push_background_buffer
-
-        lda OFFSET
-        clc
-        cmp #$38
-        bcc player_loop
-    
-    rts
-.endproc
-
 
 ;; Moves player by 1 tile
 .proc move_player
