@@ -1,6 +1,4 @@
 ;; Initialises player memory (hardcoded values)
-;; The players are spawned 1 position further back as we do not draw them in the original spot.
-;; The first time we move the players will be the first time we draw them
 .proc init_player
     ; set sprite attributes (no flipping x 2, in front of background, unimplemented x 3, palette x 2)    
 
@@ -10,7 +8,7 @@
     sta PLAYER_HEAD_SPRITE_1 + 2 ; store attributes
 
     ; Head + Length
-    lda #$01                     ; (2, 0)
+    lda #$46                     ; (6, 2)
     sta PLAYER_HEAD_1
     lda #$08                     ; Length of 3, plus 2 0 bits for player head location
     sta PLAYER_LENGTH_1
@@ -26,7 +24,7 @@
     sta PLAYER_HEAD_SPRITE_2 + 2 ; store attributes
 
     ; Head + Length
-    lda #$3F                     ; (31, 2)
+    lda #$9B                     ; (27, 4)
     sta PLAYER_HEAD_2
     lda #$08                     ; Length of 3, plus 2 0 bits for player head location
     sta PLAYER_LENGTH_2
@@ -42,7 +40,7 @@
     sta PLAYER_HEAD_SPRITE_3 + 2 ; store attributes
 
     ; Head + Length
-    lda #$BE                     ; (31, 29)
+    lda #$79                     ; (25, 27)
     sta PLAYER_HEAD_3
     lda #$0B                     ; Length of 3, plus 2 0 bits for player head location
     sta PLAYER_LENGTH_3
@@ -58,7 +56,7 @@
     sta PLAYER_HEAD_SPRITE_4 + 2 ; store attributes
 
     ; Head + Length
-    lda #$80                     ; (0, 29)
+    lda #$24                     ; (4, 25)
     sta PLAYER_HEAD_4
     lda #$0B                     ; Length of 3, plus 2 0 bits for player head location
     sta PLAYER_LENGTH_4
@@ -68,6 +66,82 @@
     sta PLAYER_BODY_4
     sta PLAYER_BODY_4 + 1
         
+    rts
+.endproc
+
+.proc draw_initial_player
+    ;; Player 1
+    lda #$0B
+    ldx #$20
+    ldy #$44
+    jsr push_background_buffer
+
+    lda #$05
+    ldx #$20
+    ldy #$45
+    jsr push_background_buffer
+
+    lda #$0f
+    sta PLAYER_HEAD_SPRITE_1
+    lda #$30
+    sta PLAYER_HEAD_SPRITE_1 + 3
+    lda #$01
+    sta PLAYER_HEAD_SPRITE_1 + 1
+
+    ;; Player 2
+    lda #$0D
+    ldx #$20
+    ldy #$5B
+    jsr push_background_buffer
+
+    lda #$06
+    ldx #$20
+    ldy #$7B
+    jsr push_background_buffer
+
+    lda #$1F
+    sta PLAYER_HEAD_SPRITE_2
+    lda #$D8
+    sta PLAYER_HEAD_SPRITE_2 + 3
+    lda #$03
+    sta PLAYER_HEAD_SPRITE_2 + 1
+
+    ;; Player 3
+    lda #$0C
+    ldx #$23
+    ldy #$7B
+    jsr push_background_buffer
+
+    lda #$05
+    ldx #$23
+    ldy #$7A
+    jsr push_background_buffer
+
+    lda #$D7
+    sta PLAYER_HEAD_SPRITE_3
+    lda #$C8
+    sta PLAYER_HEAD_SPRITE_3 + 3
+    lda #$02
+    sta PLAYER_HEAD_SPRITE_3 + 1
+
+    ;; Player 4
+    lda #$0E
+    ldx #$23
+    ldy #$64
+    jsr push_background_buffer
+
+    lda #$06
+    ldx #$23
+    ldy #$44
+    jsr push_background_buffer
+
+    lda #$C8
+    sta PLAYER_HEAD_SPRITE_4
+    lda #$20
+    sta PLAYER_HEAD_SPRITE_4 + 3
+    lda #$04
+    sta PLAYER_HEAD_SPRITE_4 + 1
+
     rts
 .endproc
 

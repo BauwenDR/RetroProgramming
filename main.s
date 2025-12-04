@@ -29,6 +29,25 @@ cmp #$01
 bne vblank_wait
 jsr init_player
 
+; Wait one second before starting player movement
+initial_delay:
+jsr draw_initial_player
+lda VBLANK_OCCURED
+cmp #01
+bne :++
+  lda #$00
+  sta VBLANK_OCCURED
+
+  lda VBLANK_TICK_COUNT
+  cmp #$32
+  bcc :+
+    lda #$00
+    sta VBLANK_TICK_COUNT
+    ; jmp forever
+  :
+  jmp initial_delay
+:
+
 forever:
   lda VBLANK_OCCURED
   cmp #$01
