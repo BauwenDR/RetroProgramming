@@ -8,7 +8,7 @@
     sta PLAYER_HEAD_SPRITE_1 + 2 ; store attributes
 
     ; Head + Length
-    lda #$46                     ; (6, 2)
+    lda #$86                     ; (6, 4)
     sta PLAYER_HEAD_1
     lda #$08                     ; Length of 3, plus 2 0 bits for player head location
     sta PLAYER_LENGTH_1
@@ -24,7 +24,7 @@
     sta PLAYER_HEAD_SPRITE_2 + 2 ; store attributes
 
     ; Head + Length
-    lda #$9B                     ; (27, 4)
+    lda #$DB                     ; (27, 6)
     sta PLAYER_HEAD_2
     lda #$08                     ; Length of 3, plus 2 0 bits for player head location
     sta PLAYER_LENGTH_2
@@ -73,15 +73,15 @@
     ;; Player 1
     lda #$0B
     ldx #$20
-    ldy #$44
+    ldy #$84
     jsr push_background_buffer
 
     lda #$05
     ldx #$20
-    ldy #$45
+    ldy #$85
     jsr push_background_buffer
 
-    lda #$0f
+    lda #$1F
     sta PLAYER_HEAD_SPRITE_1
     lda #$30
     sta PLAYER_HEAD_SPRITE_1 + 3
@@ -91,15 +91,15 @@
     ;; Player 2
     lda #$0D
     ldx #$20
-    ldy #$5B
+    ldy #$9B
     jsr push_background_buffer
 
     lda #$06
     ldx #$20
-    ldy #$7B
+    ldy #$BB
     jsr push_background_buffer
 
-    lda #$1F
+    lda #$2E
     sta PLAYER_HEAD_SPRITE_2
     lda #$D8
     sta PLAYER_HEAD_SPRITE_2 + 3
@@ -374,6 +374,8 @@
             ora PLAYER_BODY,x
             sta PLAYER_BODY,x
         input_end:
+
+        .include "playerBoundsCheck.s"
         
         ldx OFFSET  ;loads the right offset into x for the right snake 
         ; Draw body on last head location ---------------------------------------------------------------------------------------------------------------------------------------------------------
