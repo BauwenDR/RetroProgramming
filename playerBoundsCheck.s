@@ -11,7 +11,7 @@ lda PLAYER_HEAD,x
 ; Top wall
 cpy #$00
 bne :++
-    cmp #$84
+    cmp #$22
     bpl :+
         nop
     :
@@ -20,7 +20,7 @@ bne :++
 ; Bottom wall
 cpy #$03
 bne :++
-    cmp #$7C    ; Last possible position (plus 1 to avoid triggering when we hit that exact tile)
+    cmp #$9E    ; Last possible position (plus 1 to avoid triggering when we hit that exact tile)
     bmi :+
         nop
     :
@@ -30,13 +30,13 @@ AND #$1F  ; Only last 5 bits of head are needed to check for left/ right collisi
         ; This is only true when we do only account for the 5 lsb's
 
 ; Left wall
-cmp #$03
+cmp #$1E
 bne :+  ; Left wall hit
     nop
 :
 
 ; Right wall
-cmp #$1C
+cmp #$01
 bne :+  ; Right wall hit
     nop
 :
