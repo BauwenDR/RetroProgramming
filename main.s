@@ -23,15 +23,29 @@
 .include "random.s"
 
 ;; Wait for first VBLANK to have occured
+lda #$00
+sta VBLANK_OCCURED
 vblank_wait:
 lda VBLANK_OCCURED
 cmp #$01
 bne vblank_wait
-jsr init_player
-jsr init_draw_player
+lda #$00
+sta VBLANK_OCCURED
 
 jsr init_pickups
 jsr render_border
+
+lda #$00
+sta VBLANK_OCCURED
+vblank_wait_2:
+lda VBLANK_OCCURED
+cmp #$01
+bne vblank_wait_2
+lda #$00
+sta VBLANK_OCCURED
+
+jsr init_player
+jsr init_draw_player
 
 .proc forever
   jsr read_input
@@ -40,7 +54,6 @@ jsr render_border
   bne :+ ; If (VBLANK_OCCURED)
     lda #$00  ; VBLANK_OCCURED = false
     sta VBLANK_OCCURED
-
 
     lda VBLANK_TICK_COUNT
 
@@ -69,6 +82,7 @@ jsr render_border
 .include "nmi.s"
 .include "pushBackgroundBuffer.s"
 
+.include "playerInit.s"
 .include "player.s"
 .include "input.s"
 .include "delete_dead.s"
