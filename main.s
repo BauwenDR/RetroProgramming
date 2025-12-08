@@ -90,7 +90,7 @@ palettes:
   .byte $1B, $2D, $27, $30
 
   ; Sprite Palette
-  .byte $0B, $18, $29, $38
+  .byte $0B, $11, $21, $31
   .byte $0B, $05, $16, $36
   .byte $0B, $14, $25, $35
   .byte $0B, $2D, $27, $30

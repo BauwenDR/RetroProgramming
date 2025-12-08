@@ -247,11 +247,6 @@
         jmp start
     :
     jmp start
-
-
-
-
-   
 .endproc
 
-
+nop
