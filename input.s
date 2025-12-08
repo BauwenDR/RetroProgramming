@@ -1,5 +1,3 @@
-INPUT_RAM = $01
-
 .proc read_input
     lda #$01    ; Strobe the controllers, so we have the most recent input values
     sta JOYPAD1 ; We only need to strobe the input once, as enabling the stobe bit strobes all controllers
@@ -15,33 +13,42 @@ INPUT_RAM = $01
     rts
 .endproc
 
-read_controller_one:
-    lda #$01
+.proc read_controller_one
+    INPUT_RAM = $01
+
     sta INPUT_RAM
     lsr
-:
-    lda JOYPAD1,X
-    lsr a          ; bit 0 -> Carry
-    rol INPUT_RAM  ; Carry -> bit 0; bit 7 -> Carry
-    bcc :-
+
+    :
+        lda JOYPAD1,X
+        lsr a          ; bit 0 -> Carry
+        rol INPUT_RAM  ; Carry -> bit 0; bit 7 -> Carry
+        bcc :-
+
     lda INPUT_RAM
     ora CONTROLLER1,X
     sta CONTROLLER1,X
     rts
+.endproc
 
-read_controller_two:
+.proc read_controller_two
+    INPUT_RAM = $01
+
     lda #$01
     sta INPUT_RAM
     lsr
-:
-    lda JOYPAD1,X
-    lsr a          ; bit 0 -> Carry
-    rol INPUT_RAM  ; Carry -> bit 0; bit 7 -> Carry
-    bcc :-
+
+    :
+        lda JOYPAD1,X
+        lsr a          ; bit 0 -> Carry
+        rol INPUT_RAM  ; Carry -> bit 0; bit 7 -> Carry
+        bcc :-
+
     lda INPUT_RAM
     ora CONTROLLER3,X
     sta CONTROLLER3,X
     rts
+.endproc
 
 .proc reset_input
     lda #$00
