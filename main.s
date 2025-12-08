@@ -28,48 +28,37 @@ lda VBLANK_OCCURED
 cmp #$01
 bne vblank_wait
 jsr init_player
-; jsr init_draw_player
+jsr init_draw_player
 
 jsr init_pickups
 jsr render_border
 
-ldx #$00
-;jsr delete_snake 
-ldx #$01
-;jsr delete_snake
-ldx #$02
-;jsr delete_snake
-ldx #$03
-;jsr delete_snake
-  
-
-
-forever:
+.proc forever
+  jsr read_input
   lda VBLANK_OCCURED
   cmp #$01
-  bne :+++ ; If (VBLANK_OCCURED)
+  bne :+ ; If (VBLANK_OCCURED)
     lda #$00  ; VBLANK_OCCURED = false
     sta VBLANK_OCCURED
 
-    jsr read_input
 
     lda VBLANK_TICK_COUNT
     cmp #$08
     bcc :+  ; IF(VBLANK_TICK_COUNT >= 8)
       lda #$00  ; VBLANK_TICK_COUNT = 0
       sta VBLANK_TICK_COUNT
+      jsr read_input
       jsr move_player
+      jsr read_input
       jsr reset_input
+      jsr read_input
       jsr player_collistions
-    :
-    cmp #$07
-    bcc :+
+      jsr read_input
       jsr update_pickups
-    :
   :
-
-
+  
   jmp forever
+.endproc
 
 .include "nmi.s"
 .include "pushBackgroundBuffer.s"

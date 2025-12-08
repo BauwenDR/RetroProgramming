@@ -574,4 +574,5 @@
         ldx #$03
         jsr delete_snake 
     :       
+    rts
 .endproc

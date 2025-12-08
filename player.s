@@ -4,7 +4,6 @@
     ; set attributes (no flipping x 2, in front of background, unimplemented x 3, palette x 2)
     lda #%00000000
     sta PLAYER_HEAD_SPRITE_1 + 2 ; store attributes
-    sta PLAYER_TAIL_SPRITE_1 + 2
 
     lda #%00000001
     sta PLAYER_HEAD_SPRITE_2 + 2 ; store attributes
@@ -20,9 +19,9 @@
     sta OFFSET
 
     ;player 1
-    lda #%00000000              ;right
+    lda #%00000000
     sta PLAYER_BODY
-    sta PLAYER_BODY + 1 
+    ; sta PLAYER_BODY + 1 
 
     lda #$25                    ;x = 5, y = 1
     sta PLAYER_HEAD
@@ -32,9 +31,9 @@
 
 
     ;player 2
-    lda #%10101010 
+    lda #%10101000
     sta PLAYER_BODY_2
-    sta PLAYER_BODY_2 + 1 
+    ; sta PLAYER_BODY_2 + 1 
 
     lda #%01111101              ;x = 29, y = 3
     sta PLAYER_HEAD_2
@@ -43,9 +42,9 @@
     sta PLAYER_LENGTH_2
 
     ;player 3
-    lda #%01010101 
+    lda #%01010100
     sta PLAYER_BODY_3
-    sta PLAYER_BODY_3 + 1 
+    ; sta PLAYER_BODY_3 + 1 
 
     lda #%10011011              ;x = 27, y = 28
     sta PLAYER_HEAD_3
@@ -54,9 +53,9 @@
     sta PLAYER_LENGTH_3
 
     ;player 4
-    lda #%11111111 
+    lda #%11111100
     sta PLAYER_BODY_4
-    sta PLAYER_BODY_4 + 1 
+    ; sta PLAYER_BODY_4 + 1 
 
     lda #%01000010              ;x = 2, y = 26
     sta PLAYER_HEAD_4
@@ -65,32 +64,6 @@
     sta PLAYER_LENGTH_4
 
     rts 
-    player_loop:
-        
-        ldx OFFSET ;loads the right offset into x for the right body part ;head
-        lda #$02            ; (2, 0)
-        sta PLAYER_HEAD,x
-
-        ldx OFFSET ;loads the right offset into x for the right body part
-        lda #$0C           ; Length of 3, plus 2 0 bits for player head location
-        sta PLAYER_LENGTH,x
-
-        ; Load in body
-        ldx OFFSET
-        lda #%10101010           ; All 3 facing down
-        sta PLAYER_BODY,x
-        sta PLAYER_BODY + 1,x
-        
-        lda OFFSET
-        clc
-        adc #$12
-        sta OFFSET
-
-        lda OFFSET
-        clc
-        cmp #$38
-        bcc player_loop
-    rts
 .endproc
 
 
@@ -158,15 +131,20 @@
 
     player_loop:
         ldx OFFSET ;loads the right offset into x for the right snake
+        cpx #$38
+        bmi :+
+            jmp player_loop_end
+        :
+
         ; Store player length in $01
         lda PLAYER_LENGTH,x
         lsr
         lsr
         sta LENGTH
         cmp #$02                    ;check if the length of the snake is shorter then 2
-        bpl:+
-            jsr nextplayer
-            rts              ;then skip this code and move to the next player
+        bpl :+
+            jsr next_player
+            jmp player_loop             ;then skip this code and move to the next player
         :
         ; Store amount of bytes the body currently takes in $02 and $03
         sec 
@@ -572,32 +550,29 @@
         adc #$01
         sta PLAYER_HEAD_SPRITE + 1,y ; store tile index
 
-
         .include "draw_tail.s"
-        nextplayer:
-            ; move the other 3 players ----------------------------------------------------------------------------------------------------------------------------------------------------------
-            lda OFFSET
-            clc
-            adc #$12
-            sta OFFSET
 
-            lda CONTROLLER_OFFSET
-            clc
-            adc #$01
-            sta CONTROLLER_OFFSET
+    jmp next_player_skip
+    .proc next_player
+        lda OFFSET
+        clc
+        adc #$12
+        sta OFFSET
 
-            lda SPRITE_OFFSET
-            clc
-            adc #$04
-            sta SPRITE_OFFSET
+        inc CONTROLLER_OFFSET
+    
+        lda SPRITE_OFFSET
+        clc
+        adc #$04
+        sta SPRITE_OFFSET
 
-            lda OFFSET
-            clc
-            cmp #$38
-            bcs :+
-                jsr player_loop
-            :
+        rts
+    .endproc
 
+    next_player_skip:
+    jsr next_player
+    jmp player_loop
+    player_loop_end:
     rts
 .endproc
 
@@ -662,9 +637,9 @@
 .proc add_segment
     LENGTH = $01
     OFFSET = $02
+
     ;y has to be the offset
     sty OFFSET
-
 
     lda PLAYER_LENGTH,y         ;getting the player length
     lsr                         ;putting it in the right spot
