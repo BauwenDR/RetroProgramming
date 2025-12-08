@@ -19,7 +19,7 @@
     sta OFFSET
 
     ;player 1
-    lda #%00000000
+    lda #%00000000              ;right
     sta PLAYER_BODY
     ; sta PLAYER_BODY + 1 
 
@@ -31,7 +31,7 @@
 
 
     ;player 2
-    lda #%10101000
+    lda #%10101010 
     sta PLAYER_BODY_2
     ; sta PLAYER_BODY_2 + 1 
 
@@ -42,7 +42,7 @@
     sta PLAYER_LENGTH_2
 
     ;player 3
-    lda #%01010100
+    lda #%01010101 
     sta PLAYER_BODY_3
     ; sta PLAYER_BODY_3 + 1 
 
@@ -53,7 +53,7 @@
     sta PLAYER_LENGTH_3
 
     ;player 4
-    lda #%11111100
+    lda #%11111111 
     sta PLAYER_BODY_4
     ; sta PLAYER_BODY_4 + 1 
 
@@ -637,9 +637,9 @@
 .proc add_segment
     LENGTH = $01
     OFFSET = $02
-
     ;y has to be the offset
     sty OFFSET
+
 
     lda PLAYER_LENGTH,y         ;getting the player length
     lsr                         ;putting it in the right spot
