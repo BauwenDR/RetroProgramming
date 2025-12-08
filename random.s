@@ -15,10 +15,19 @@ galois16:
 	bcc :+
 	eor #$39   ; apply XOR feedback whenever a 1 bit is shifted out
 :
-	dey
+	dey 
 	bne :--
 	sta RANDOM_SEED+0
 	cmp #0     ; reload flags
-	rts
+
+
+	;mattias code
+	and #%00011111 			;last 3 bits we dont need
+    cmp #$1C				;if it 28 or larger we subtract 16
+    bcc:+
+	 	sec 
+        sbc #$0D			; subtracting 16
+    :
+	rts 
 
 skip_random:

@@ -1,149 +1,129 @@
 ;; Initialises player memory (hardcoded values)
 .proc init_player
-    ; set sprite attributes (no flipping x 2, in front of background, unimplemented x 3, palette x 2)    
-
-    ;; Player 1
-    ; Head sprite
+    
+    ; set attributes (no flipping x 2, in front of background, unimplemented x 3, palette x 2)
     lda #%00000000
     sta PLAYER_HEAD_SPRITE_1 + 2 ; store attributes
+    sta PLAYER_TAIL_SPRITE_1 + 2
 
-    ; Head + Length
-    lda #$86                     ; (6, 4)
-    sta PLAYER_HEAD_1
-    lda #$08                     ; Length of 3, plus 2 0 bits for player head location
-    sta PLAYER_LENGTH_1
-
-    ; Load in body
-    lda #%00000000               ; All 3 facing right
-    sta PLAYER_BODY_1
-    sta PLAYER_BODY_1 + 1
-
-    ; Player 2
-    ; Head sprite
     lda #%00000001
     sta PLAYER_HEAD_SPRITE_2 + 2 ; store attributes
 
-    ; Head + Length
-    lda #$DB                     ; (27, 6)
-    sta PLAYER_HEAD_2
-    lda #$08                     ; Length of 3, plus 2 0 bits for player head location
-    sta PLAYER_LENGTH_2
-
-    ; Load in body
-    lda #%10101010               ; All 3 facing down
-    sta PLAYER_BODY_2
-    sta PLAYER_BODY_2 + 1
-
-    ; Player 3
-    ; Head sprite
     lda #%00000010
     sta PLAYER_HEAD_SPRITE_3 + 2 ; store attributes
 
-    ; Head + Length
-    lda #$79                     ; (25, 27)
-    sta PLAYER_HEAD_3
-    lda #$0B                     ; Length of 3, plus 2 0 bits for player head location
-    sta PLAYER_LENGTH_3
-
-    ; Load in body
-    lda #%01010101               ; All 3 facing left
-    sta PLAYER_BODY_3
-    sta PLAYER_BODY_3 + 1
-
-    ; Player 4
-    ; Head sprite
     lda #%00000011
     sta PLAYER_HEAD_SPRITE_4 + 2 ; store attributes
 
-    ; Head + Length
-    lda #$24                     ; (4, 25)
+    OFFSET = $01
+    lda #$00
+    sta OFFSET
+
+    ;player 1
+    lda #%00000000              ;right
+    sta PLAYER_BODY
+    sta PLAYER_BODY + 1 
+
+    lda #$25                    ;x = 5, y = 1
+    sta PLAYER_HEAD
+
+    lda #%00001100              ;length = 3, y = 1
+    sta PLAYER_LENGTH
+
+
+    ;player 2
+    lda #%10101010 
+    sta PLAYER_BODY_2
+    sta PLAYER_BODY_2 + 1 
+
+    lda #%01111101              ;x = 29, y = 3
+    sta PLAYER_HEAD_2
+
+    lda #%00001100              ;length = 3, y = 3
+    sta PLAYER_LENGTH_2
+
+    ;player 3
+    lda #%01010101 
+    sta PLAYER_BODY_3
+    sta PLAYER_BODY_3 + 1 
+
+    lda #%10011011              ;x = 27, y = 28
+    sta PLAYER_HEAD_3
+
+    lda #%00001111              ;length = 3, y = 28
+    sta PLAYER_LENGTH_3
+
+    ;player 4
+    lda #%11111111 
+    sta PLAYER_BODY_4
+    sta PLAYER_BODY_4 + 1 
+
+    lda #%01000010              ;x = 2, y = 26
     sta PLAYER_HEAD_4
-    lda #$0B                     ; Length of 3, plus 2 0 bits for player head location
+
+    lda #%00001111              ;length = 3, y = 26
     sta PLAYER_LENGTH_4
 
-    ; Load in body
-    lda #%11111111               ; All 3 facing up
-    sta PLAYER_BODY_4
-    sta PLAYER_BODY_4 + 1
+    rts 
+    player_loop:
         
+        ldx OFFSET ;loads the right offset into x for the right body part ;head
+        lda #$02            ; (2, 0)
+        sta PLAYER_HEAD,x
+
+        ldx OFFSET ;loads the right offset into x for the right body part
+        lda #$0C           ; Length of 3, plus 2 0 bits for player head location
+        sta PLAYER_LENGTH,x
+
+        ; Load in body
+        ldx OFFSET
+        lda #%10101010           ; All 3 facing down
+        sta PLAYER_BODY,x
+        sta PLAYER_BODY + 1,x
+        
+        lda OFFSET
+        clc
+        adc #$12
+        sta OFFSET
+
+        lda OFFSET
+        clc
+        cmp #$38
+        bcc player_loop
     rts
 .endproc
 
-.proc draw_initial_player
-    ;; Player 1
-    lda #$0B
-    ldx #$20
-    ldy #$84
-    jsr push_background_buffer
 
-    lda #$05
-    ldx #$20
-    ldy #$85
-    jsr push_background_buffer
+;; Draws initial location of player (hardcoded values)
+.proc init_draw_player
+    OFFSET = $01
+    lda #$00
+    sta OFFSET
+    player_loop:
 
-    lda #$1F
-    sta PLAYER_HEAD_SPRITE_1
-    lda #$30
-    sta PLAYER_HEAD_SPRITE_1 + 3
-    lda #$01
-    sta PLAYER_HEAD_SPRITE_1 + 1
+        lda #$00 
+        ldx #$20
+        ldy #$02
+        jsr push_background_buffer
 
-    ;; Player 2
-    lda #$0D
-    ldx #$20
-    ldy #$9B
-    jsr push_background_buffer
+        lda #$06
+        ldx #$20
+        ldy #$01
+        jsr push_background_buffer
 
-    lda #$06
-    ldx #$20
-    ldy #$BB
-    jsr push_background_buffer
+        lda #$0A
+        ldx #$20
+        ldy #$00
+        jsr push_background_buffer
 
-    lda #$2E
-    sta PLAYER_HEAD_SPRITE_2
-    lda #$D8
-    sta PLAYER_HEAD_SPRITE_2 + 3
-    lda #$03
-    sta PLAYER_HEAD_SPRITE_2 + 1
-
-    ;; Player 3
-    lda #$0C
-    ldx #$23
-    ldy #$7B
-    jsr push_background_buffer
-
-    lda #$05
-    ldx #$23
-    ldy #$7A
-    jsr push_background_buffer
-
-    lda #$D7
-    sta PLAYER_HEAD_SPRITE_3
-    lda #$C8
-    sta PLAYER_HEAD_SPRITE_3 + 3
-    lda #$02
-    sta PLAYER_HEAD_SPRITE_3 + 1
-
-    ;; Player 4
-    lda #$0E
-    ldx #$23
-    ldy #$64
-    jsr push_background_buffer
-
-    lda #$06
-    ldx #$23
-    ldy #$44
-    jsr push_background_buffer
-
-    lda #$C8
-    sta PLAYER_HEAD_SPRITE_4
-    lda #$20
-    sta PLAYER_HEAD_SPRITE_4 + 3
-    lda #$04
-    sta PLAYER_HEAD_SPRITE_4 + 1
-
+        lda OFFSET
+        clc
+        cmp #$38
+        bcc player_loop
+    
     rts
 .endproc
+
 
 ;; Moves player by 1 tile
 .proc move_player
@@ -166,20 +146,28 @@
     sta CONTROLLER_OFFSET
     sta SPRITE_OFFSET
 
-    player_loop:
-        ; Store player length in $01
-        ldx OFFSET ;loads the right offset into x for the right snake
-        lda PLAYER_LENGTH,x
-        lsr 
-        lsr 
-        clc 
-        adc #$01
-        sta LENGTH
-        cmp #$02
-        bpl :+
-            rts ; return if size is smaller then 2
-        :
+    sta LENGTH
+    sta BYTE_SHIFT_LENGTH
+    sta LENGTH_MOD
+    sta BYTE_LENGTH
+    sta SHIFT_RIGHT_COUNT
+    sta LAST_MOVE_DIR
+    sta NEW_MOVE_DIR
+    sta CONTROLLER_FAST
+    
 
+    player_loop:
+        ldx OFFSET ;loads the right offset into x for the right snake
+        ; Store player length in $01
+        lda PLAYER_LENGTH,x
+        lsr
+        lsr
+        sta LENGTH
+        cmp #$02                    ;check if the length of the snake is shorter then 2
+        bpl:+
+            jsr nextplayer
+            rts              ;then skip this code and move to the next player
+        :
         ; Store amount of bytes the body currently takes in $02 and $03
         sec 
         sbc #$01
@@ -374,8 +362,6 @@
             ora PLAYER_BODY,x
             sta PLAYER_BODY,x
         input_end:
-
-        .include "playerBoundsCheck.s"
         
         ldx OFFSET  ;loads the right offset into x for the right snake 
         ; Draw body on last head location ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -588,29 +574,162 @@
 
 
         .include "draw_tail.s"
+        nextplayer:
+            ; move the other 3 players ----------------------------------------------------------------------------------------------------------------------------------------------------------
+            lda OFFSET
+            clc
+            adc #$12
+            sta OFFSET
 
-        ; move the other 3 players ----------------------------------------------------------------------------------------------------------------------------------------------------------
-        lda OFFSET
-        clc
-        adc #$12
-        sta OFFSET
+            lda CONTROLLER_OFFSET
+            clc
+            adc #$01
+            sta CONTROLLER_OFFSET
 
-        lda CONTROLLER_OFFSET
-        clc
-        adc #$01
-        sta CONTROLLER_OFFSET
+            lda SPRITE_OFFSET
+            clc
+            adc #$04
+            sta SPRITE_OFFSET
 
-        lda SPRITE_OFFSET
-        clc
-        adc #$04
-        sta SPRITE_OFFSET
-
-        lda OFFSET
-        clc
-        cmp #$38
-        bcs :+
-            jsr player_loop
-        :
+            lda OFFSET
+            clc
+            cmp #$38
+            bcs :+
+                jsr player_loop
+            :
 
     rts
+.endproc
+
+
+.proc delete_snake
+    COUNTER = $01
+    SNAKE_NR = $02
+    OFFSET = $03
+
+    ; when calling this function have the number of the snake you want in x (0,1,2,3)
+    lda #$00
+    sta COUNTER
+    sta OFFSET
+
+    txa
+    sta SNAKE_NR            ;loads the correct values into the zeropage
+
+    :
+    lda COUNTER
+    cmp SNAKE_NR
+    bcs:+                   ;check if the counter lines up the number that has been in x before this function
+
+    clc
+    lda OFFSET
+    adc #$12                ;$12 to jump to next snake
+    sta OFFSET
+    inc COUNTER
+
+    bcc:-                   ;jump back to previus branch
+    :
+
+    ldx OFFSET
+    lda #$00
+    sta PLAYER_HEAD,x         ;1
+    inx
+    sta PLAYER_HEAD,x         ;2
+    inx
+    sta PLAYER_HEAD,x         ;3
+    inx
+    sta PLAYER_HEAD,x         ;4
+    inx
+    sta PLAYER_HEAD,x         ;5
+    inx
+    sta PLAYER_HEAD,x         ;6
+    inx 
+    sta PLAYER_HEAD,x         ;7
+    inx 
+    sta PLAYER_HEAD,x         ;8
+    inx
+    sta PLAYER_HEAD,x         ;9
+    inx
+    sta PLAYER_HEAD,x         ;10
+    inx
+    sta PLAYER_HEAD,x         ;11
+    inx
+    ;set all bytes to 0
+
+
+    rts
+.endproc
+
+.proc add_segment
+    LENGTH = $01
+    OFFSET = $02
+    ;y has to be the offset
+    sty OFFSET
+
+
+    lda PLAYER_LENGTH,y         ;getting the player length
+    lsr                         ;putting it in the right spot
+    lsr                         ;and shifting the bits from the head out
+    cmp #$3e                    ;if the length is 62 we dont increase it more
+    bne:+
+        rts 
+    :                         
+    lsr                         
+    lsr                         
+    sta LENGTH
+   
+    ldx OFFSET
+    clc 
+    adc OFFSET 
+    sta LENGTH
+    clc 
+
+    ror PLAYER_BODY,x
+    ror PLAYER_BODY + 1,x
+    ror PLAYER_BODY + 2,x
+    ror PLAYER_BODY + 3,x
+    ror PLAYER_BODY + 4,x
+    ror PLAYER_BODY + 5,x
+    ror PLAYER_BODY + 6,x
+    ror PLAYER_BODY + 7,x
+    ror PLAYER_BODY + 8,x
+    ror PLAYER_BODY + 9,x
+    ror PLAYER_BODY + $0A,x
+    ror PLAYER_BODY + $0B,x
+    ror PLAYER_BODY + $0C,x
+    ror PLAYER_BODY + $0D,x
+    ror PLAYER_BODY + $0E,x
+    ror PLAYER_BODY + $0F,x
+    clc 
+    ror PLAYER_BODY,x
+    ror PLAYER_BODY + 1,x
+    ror PLAYER_BODY + 2,x
+    ror PLAYER_BODY + 3,x
+    ror PLAYER_BODY + 4,x
+    ror PLAYER_BODY + 5,x
+    ror PLAYER_BODY + 6,x
+    ror PLAYER_BODY + 7,x
+    ror PLAYER_BODY + 8,x
+    ror PLAYER_BODY + 9,x
+    ror PLAYER_BODY + $0A,x
+    ror PLAYER_BODY + $0B,x
+    ror PLAYER_BODY + $0C,x
+    ror PLAYER_BODY + $0D,x
+    ror PLAYER_BODY + $0E,x
+    ror PLAYER_BODY + $0F,x
+
+    
+    ldy OFFSET
+    lda PLAYER_BODY, y
+    and #%00110000
+    asl 
+    asl 
+    ora PLAYER_BODY, y
+    sta PLAYER_BODY, y
+
+    ldy OFFSET        
+    lda PLAYER_LENGTH,y
+    clc 
+    adc #$04
+    sta PLAYER_LENGTH,y
+    rts 
 .endproc

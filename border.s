@@ -1,0 +1,196 @@
+.proc render_border
+    COUNTER_Y = $01
+    COUNTER_X = $02
+
+    lda #$00
+    sta VBLANK_TICK_COUNT
+    render_loop:
+        lda VBLANK_TICK_COUNT
+        cmp #$01
+        bne:++ 
+            lda #%00000010
+            sta COUNTER_Y
+
+            :                                   ;top row
+            ldx #%00100000
+            ldy COUNTER_Y
+            lda #$11
+            jsr push_background_buffer
+            lda COUNTER_Y
+            inc COUNTER_Y
+            cmp #%00011101
+            bne:-
+        :
+        lda VBLANK_TICK_COUNT
+        cmp #$03 
+        bne:++
+            lda #%10100010
+            sta COUNTER_Y
+    
+            :                                   ;bottem row
+            ldx #%00100011
+            ldy COUNTER_Y
+            lda #$11
+            jsr push_background_buffer
+            lda COUNTER_Y
+            inc COUNTER_Y
+            cmp #%10111101
+            bne:-
+            lda #$09
+        :
+        lda VBLANK_TICK_COUNT
+        cmp #$05 
+        bne:++
+            lda #%00000000
+            sta COUNTER_Y
+            lda #%00100000
+            sta COUNTER_X
+
+            :                                   ;left row
+            ldx COUNTER_X
+            ldy COUNTER_Y
+            lda #$11
+            jsr push_background_buffer
+
+            lda COUNTER_Y
+            tay 
+
+            lda COUNTER_X
+            tax 
+
+            lda COUNTER_Y
+            clc 
+            adc #%00100000
+            sta COUNTER_Y
+            lda COUNTER_X
+            adc #$00
+            sta COUNTER_X
+
+            tya 
+            cmp #%10100000
+            bne:-
+                txa 
+                cmp #%00100011
+                bne:-
+        :
+
+        lda VBLANK_TICK_COUNT
+        cmp #$07 
+        bne:++
+            lda #%00000001
+            sta COUNTER_Y
+            lda #%00100000
+            sta COUNTER_X
+
+            :                                   ;2de left row
+            ldx COUNTER_X
+            ldy COUNTER_Y
+            lda #$11
+            jsr push_background_buffer
+
+            lda COUNTER_Y
+            tay 
+
+            lda COUNTER_X
+            tax 
+
+            lda COUNTER_Y
+            clc 
+            adc #%00100000
+            sta COUNTER_Y
+            lda COUNTER_X
+            adc #$00
+            sta COUNTER_X
+
+            tya 
+            cmp #%10100001
+            bne:-
+                txa 
+                cmp #%00100011
+                bne:-
+        :
+
+        lda VBLANK_TICK_COUNT
+        cmp #$09 
+        bne:++
+            lda #%00011110
+            sta COUNTER_Y
+            lda #%00100000
+            sta COUNTER_X
+
+            :                                   ;right row
+            ldx COUNTER_X
+            ldy COUNTER_Y
+            lda #$11
+            jsr push_background_buffer
+
+            lda COUNTER_Y
+            tay 
+
+            lda COUNTER_X
+            tax 
+
+            lda COUNTER_Y
+            clc 
+            adc #%00100000
+            sta COUNTER_Y
+            lda COUNTER_X
+            adc #$00
+            sta COUNTER_X
+
+            tya 
+            cmp #%10111110
+            bne:-
+                txa 
+                cmp #%00100011
+                bne:-
+        :
+
+        lda VBLANK_TICK_COUNT
+        cmp #$0B 
+        bne:++
+            lda #%00011111
+            sta COUNTER_Y
+            lda #%00100000
+            sta COUNTER_X
+
+            :                                   ;right row
+            ldx COUNTER_X
+            ldy COUNTER_Y
+            lda #$11
+            jsr push_background_buffer
+
+            lda COUNTER_Y
+            tay 
+
+            lda COUNTER_X
+            tax 
+
+            lda COUNTER_Y
+            clc 
+            adc #%00100000
+            sta COUNTER_Y
+            lda COUNTER_X
+            adc #$00
+            sta COUNTER_X
+
+            tya 
+            cmp #%10111111
+            bne:-
+                txa 
+                cmp #%00100011
+                bne:-
+        :
+
+
+
+
+        lda VBLANK_TICK_COUNT
+        cmp #$0D 
+        bne:+
+            rts 
+        :
+        jmp render_loop
+
+    rts 
+.endproc
