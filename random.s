@@ -24,7 +24,7 @@ galois16:
 	;mattias code
 	and #%00011111 			;last 3 bits we dont need
     cmp #$1C				;if it 28 or larger we subtract 16
-    bcc:+
+    bcc :+
 	 	sec 
         sbc #$0D			; subtracting 16
     :

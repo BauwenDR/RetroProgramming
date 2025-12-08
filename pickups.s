@@ -105,7 +105,7 @@
         jsr check_body_collisions        ;do the collistions checking with snakes
 
         cmp #$00
-        beq:+
+        beq :+
             jmp start
         :
 

@@ -168,7 +168,7 @@
             dec LENGTH
             lda LENGTH              ;getting the length
             cmp #$01                ;seing if the length is 0
-            beq:+           
+            beq :+           
                 jmp collision_loop  ;if it isnt -> loop again 
             :                       ;if it is
             prep_next_snake:
@@ -393,7 +393,7 @@
         jsr check_body_collisions
 
         cmp #$00
-        beq:++++
+        beq skip_delete_player
             lda OFFSET
                     cmp #$00
                     bne :+
@@ -427,6 +427,7 @@
 
                         lda #$01
                     :
+        skip_delete_player:
 
         ldy PLAYER_Y
         ldx PLAYER_X
@@ -466,8 +467,6 @@
 
             lda #$FF
         :
-
-    
 
 
         lda PLAYER_X

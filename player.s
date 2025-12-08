@@ -630,7 +630,7 @@
     :
     lda COUNTER
     cmp SNAKE_NR
-    bcs:+                   ;check if the counter lines up the number that has been in x before this function
+    bcs :+                   ;check if the counter lines up the number that has been in x before this function
 
     clc
     lda OFFSET
@@ -638,7 +638,7 @@
     sta OFFSET
     inc COUNTER
 
-    bcc:-                   ;jump back to previus branch
+    bcc :-                   ;jump back to previus branch
     :
 
     ldx OFFSET
