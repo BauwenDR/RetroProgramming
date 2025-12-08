@@ -1,5 +1,4 @@
 .proc init_pickups
-
     jsr new_pickup_location
     lda #$0F
     sta PICKUPS_SPRITE_1 + 1
@@ -21,16 +20,14 @@
     rts 
 .endproc
 
-
-
 .proc update_pickups
     lda #%00011111                  ;lose the bit that says if it exist
     and PICKUP_1_X
     tax 
     ldy PICKUP_1_Y
-    jsr pickup_collitions
+    jsr pickup_collisions
     cmp #$01
-    bne:+
+    bne :+
         jsr add_segment
         lda #$00
         sta PICKUP_1_X
@@ -41,9 +38,9 @@
     and PICKUP_2_X
     tax 
     ldy PICKUP_2_Y
-    jsr pickup_collitions
+    jsr pickup_collisions
     cmp #$01
-    bne:+
+    bne :+
         jsr add_segment
         lda #$00
         sta PICKUP_2_X
@@ -54,9 +51,9 @@
     and PICKUP_3_X
     tax 
     ldy PICKUP_3_Y
-    jsr pickup_collitions
+    jsr pickup_collisions
     cmp #$01
-    bne:+
+    bne :+
         jsr add_segment
         lda #$00
         sta PICKUP_3_X
@@ -77,17 +74,17 @@
         lda #%10000000
         and PICKUP_1_X      ;player1
         cmp #$80
-        bne:+
+        bne :+
 
         lda #%10000000
         and PICKUP_2_X      ;player2
         cmp #$80
-        bne:+
+        bne :+
 
         lda #%10000000
         and PICKUP_3_X      ;player3
         cmp #$80
-        bne:+
+        bne :+
 
 
         rts 
@@ -105,7 +102,7 @@
         tay 
         sty TEMP_Y
 
-        jsr check_body_collitions        ;do the collistions checking with snakes
+        jsr check_body_collisions        ;do the collistions checking with snakes
 
         cmp #$00
         beq:+
@@ -116,14 +113,14 @@
         lda #%10000000                  
         and PICKUP_1_X
         cmp #$80                            ;check if pickup1 is on the map
-        bne:+
+        bne :+
             lda #%00011111                  ;lose the bit that says if it exist
             and PICKUP_1_X
             cmp TEMP_X                      ;check if x location is on the same place
-            bne:++
+            bne :++
                 lda PICKUP_1_Y
                 cmp TEMP_Y
-                bne:++                      ;check if y location is on the same place
+                bne :++                      ;check if y location is on the same place
                 jmp start                   ;if yes then we go again
         :
             lda #$01                        ;set the first bit in new locations
@@ -134,14 +131,14 @@
         lda #%10000000                      ;read for player 1 its exact the same here
         and PICKUP_2_X
         cmp #$80
-        bne:+
+        bne :+
             lda #%00011111
             and PICKUP_2_X
             cmp TEMP_X
-            bne:++
+            bne :++
                 lda PICKUP_2_Y
                 cmp TEMP_Y
-                bne:+
+                bne :+
                 jmp start
         :
             lda #$02
@@ -152,14 +149,14 @@
         lda #%10000000                      ;read for player 1 its exact the same here
         and PICKUP_3_X
         cmp #$80
-        bne:+
+        bne :+
             lda #%00011111
             and PICKUP_3_X
             cmp TEMP_X
-            bne:++
+            bne :++
                 lda PICKUP_3_Y
                 cmp TEMP_Y
-                bne:++
+                bne :++
                 jmp start
         :
             lda #$04
@@ -170,7 +167,7 @@
         lda #$01
         and NEW_LOCATIONS
         cmp #$01
-        bne:+
+        bne :+
             lda TEMP_X
             ora #%10000000
             sta PICKUP_1_X
@@ -196,7 +193,7 @@
         lda #$02
         and NEW_LOCATIONS
         cmp #$02
-        bne:+
+        bne :+
             lda TEMP_X
             ora #%10000000
             sta PICKUP_2_X
@@ -224,7 +221,7 @@
         lda #$04
         and NEW_LOCATIONS
         cmp #$04
-        bne:+
+        bne :+
             lda TEMP_X
             ora #%10000000
             sta PICKUP_3_X
@@ -247,11 +244,4 @@
             jmp start
         :
         jmp start
-
-
-
-
-   
 .endproc
-
-

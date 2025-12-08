@@ -7,7 +7,7 @@
     render_loop:
         lda VBLANK_TICK_COUNT
         cmp #$01
-        bne:++ 
+        bne :++ 
             lda #%00000010
             sta COUNTER_Y
 
@@ -19,11 +19,11 @@
             lda COUNTER_Y
             inc COUNTER_Y
             cmp #%00011101
-            bne:-
+            bne :-
         :
         lda VBLANK_TICK_COUNT
         cmp #$03 
-        bne:++
+        bne :++
             lda #%10100010
             sta COUNTER_Y
     
@@ -35,12 +35,12 @@
             lda COUNTER_Y
             inc COUNTER_Y
             cmp #%10111101
-            bne:-
+            bne :-
             lda #$09
         :
         lda VBLANK_TICK_COUNT
         cmp #$05 
-        bne:++
+        bne :++
             lda #%00000000
             sta COUNTER_Y
             lda #%00100000
@@ -68,21 +68,21 @@
 
             tya 
             cmp #%10100000
-            bne:-
+            bne :-
                 txa 
                 cmp #%00100011
-                bne:-
+                bne :-
         :
 
         lda VBLANK_TICK_COUNT
         cmp #$07 
-        bne:++
+        bne :++
             lda #%00000001
             sta COUNTER_Y
             lda #%00100000
             sta COUNTER_X
 
-            :                                   ;2de left row
+            :                                   ;2nd left row
             ldx COUNTER_X
             ldy COUNTER_Y
             lda #$11
@@ -104,15 +104,15 @@
 
             tya 
             cmp #%10100001
-            bne:-
+            bne :-
                 txa 
                 cmp #%00100011
-                bne:-
+                bne :-
         :
 
         lda VBLANK_TICK_COUNT
         cmp #$09 
-        bne:++
+        bne :++
             lda #%00011110
             sta COUNTER_Y
             lda #%00100000
@@ -140,21 +140,21 @@
 
             tya 
             cmp #%10111110
-            bne:-
+            bne :-
                 txa 
                 cmp #%00100011
-                bne:-
+                bne :-
         :
 
         lda VBLANK_TICK_COUNT
         cmp #$0B 
-        bne:++
+        bne :++
             lda #%00011111
             sta COUNTER_Y
             lda #%00100000
             sta COUNTER_X
 
-            :                                   ;right row
+            :                                   ;2nd right row
             ldx COUNTER_X
             ldy COUNTER_Y
             lda #$11
@@ -176,10 +176,10 @@
 
             tya 
             cmp #%10111111
-            bne:-
+            bne :-
                 txa 
                 cmp #%00100011
-                bne:-
+                bne :-
         :
 
 
@@ -187,7 +187,7 @@
 
         lda VBLANK_TICK_COUNT
         cmp #$0D 
-        bne:+
+        bne :+
             rts 
         :
         jmp render_loop

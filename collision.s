@@ -1,5 +1,5 @@
 
-.proc check_body_collitions
+.proc check_body_collisions
     ;make sure that in the x register has the x value of the location that has to be checkt
     ;make sure that in the y register has the y value of the location that has to be checkt
     CHECK_X = $01                   ;the x location to check
@@ -19,15 +19,15 @@
     next_snake:
         ldy OFFSET                  ;load the offset in y
         cpy #$48                    ;check if the offset is 48 (if it is it means that is done with looping)
-        bne:+       
-            jmp no_collition_found  ;if it is 48 -> end the function
+        bne :+       
+            jmp no_collision_found  ;if it is 48 -> end the function
         :
                                    ;else -> continiue
         lda PLAYER_LENGTH,y
         lsr 
         lsr 
         cmp #$00
-        bne:+
+        bne :+
             jmp prep_next_snake
         :
 
@@ -36,7 +36,7 @@
         lsr                         ;and shifting the bits from the head out
         sta LENGTH                  ;storing the value
         cmp #$00                    ;seing if the length is 0
-        bne:+                       ;if it is skip to next player
+        bne :+                       ;if it is skip to next player
             tya                     ;get the offset to a
             clc     
             adc #$12                ;add 12 because the size of the player in memory is 12
@@ -88,14 +88,14 @@
             and #%00000011
             ;based on the result we need to shift the byte
             cmp #$00                ;0 shifts                    
-            bne:+
+            bne :+
                 lda PLAYER_BODY,y
                 tax 
                 lda #$04
             :
 
             cmp #$03                ;2 shifts
-            bne:+
+            bne :+
                 lda PLAYER_BODY,y
                 lsr 
                 lsr 
@@ -104,7 +104,7 @@
             :
 
             cmp #$02               ;4 shifts
-            bne:+
+            bne :+
                 lda PLAYER_BODY,y
                 lsr 
                 lsr 
@@ -115,7 +115,7 @@
             :
 
             cmp #$01                ;6 shifts
-            bne:+
+            bne :+
                 lda PLAYER_BODY,y
                 lsr 
                 lsr 
@@ -131,35 +131,35 @@
             ;setting the next location
            
             cmp #$00                ;left                 
-            bne:+
+            bne :+
                 dec SNAKE_X
                 lda #$04
             :
 
             cmp #$01                ;right                
-            bne:+
+            bne :+
                 inc SNAKE_X
                 lda #$04
             :
 
             cmp #$02                ;up                  
-            bne:+
+            bne :+
                 dec SNAKE_Y
                 lda #$04
             :
 
             cmp #$03                ;down                  
-            bne:+
+            bne :+
                 inc SNAKE_Y
                 lda #$04
             :
 
             lda SNAKE_X
             cmp CHECK_X
-            bne:+
+            bne :+
                 lda SNAKE_Y
                 cmp CHECK_Y
-                bne:+
+                bne :+
                     jmp collision_found
                     
                 
@@ -182,12 +182,12 @@
         ldy OFFSET              ;load the offset in y so you know what player had the collistion
         lda #$01                ;load 1 in a so you know there has been a collistion
         rts 
-    no_collition_found:
+    no_collision_found:
         lda #$00                ;load 0 in a so you know there has been a collistion
         rts  
 .endproc 
 
-.proc check_head_collitions
+.proc check_head_collisions
     ;make sure that in the x register has the x value of the location that has to be checkt
     ;make sure that in the y register has the y value of the location that has to be checkt
     CHECK_X = $01                   ;the x location to check
@@ -210,7 +210,7 @@
     next_snake:
         ldy OFFSET                  ;load the offset in y
         cpy #$48                    ;check if the offset is 48 (if it is it means that is done with looping)
-        bne:+       
+        bne :+       
             lda COLLISION
             rts                     ;if it is 48 -> end the function
         :
@@ -219,7 +219,7 @@
         lsr 
         lsr 
         cmp #$00
-        bne:+
+        bne :+
             jmp prep_next_snake
         :
 
@@ -248,13 +248,13 @@
 
         lda SNAKE_X
             cmp CHECK_X
-            bne:++++
+            bne :++++
                 lda SNAKE_Y
                 cmp CHECK_Y
-                bne:++++
+                bne :++++
                     lda OFFSET
                     cmp #$00
-                    bne:+
+                    bne :+
                         lda #%00000001
                         ora COLLISION
                         sta COLLISION
@@ -262,7 +262,7 @@
                         lda #$01
                     :
                     cmp #$12
-                    bne:+
+                    bne :+
                         lda #%00000010
                         ora COLLISION
                         sta COLLISION
@@ -270,7 +270,7 @@
                         lda #$01
                     :
                     cmp #$24
-                    bne:+
+                    bne :+
                         lda #%00000100
                         ora COLLISION
                         sta COLLISION
@@ -278,7 +278,7 @@
                         lda #$01
                     :
                     cmp #$36
-                    bne:+
+                    bne :+
                         lda #%00001000
                         ora COLLISION
                         sta COLLISION
@@ -298,14 +298,14 @@
         jmp next_snake          ;go to the next snake
 .endproc
 
-.proc pickup_collitions
+.proc pickup_collisions
     COLLISION = $01
-    jsr check_head_collitions
+    jsr check_head_collisions
     sta COLLISION
 
     and #%00000001              ;player 1
     cmp #%00000001
-    bne:+
+    bne :+
         ldy #$00
         lda #$01
         rts 
@@ -314,7 +314,7 @@
     lda COLLISION
     and #%00000010              ;player 2
     cmp #%00000010
-    bne:+
+    bne :+
         ldy #$12
         lda #$01
         rts 
@@ -323,7 +323,7 @@
     lda COLLISION
     and #%00000100              ;player 3
     cmp #%00000100
-    bne:+
+    bne :+
         ldy #$24
         lda #$01
         rts 
@@ -332,12 +332,11 @@
     lda COLLISION
     and #%00001000              ;player 4
     cmp #%00001000
-    bne:+
+    bne :+
         ldy #$36
         lda #$01
         rts 
     :
-
 
     lda #$00
     rts 
@@ -356,7 +355,7 @@
     next_snake:
         ldy OFFSET                      ;load the offset in y
         cpy #$48                        ;check if the offset is 48 (if it is it means that is done with looping)
-        bne:+       
+        bne :+       
             jmp end_collisions                         ;if it is 48 -> end the function
         : 
 
@@ -364,7 +363,7 @@
         lsr 
         lsr 
         cmp #$00
-        bne:+
+        bne :+
             jmp prep_next_snake
         :
 
@@ -391,13 +390,13 @@
 
         ldy PLAYER_Y
         ldx PLAYER_X
-        jsr check_body_collitions
+        jsr check_body_collisions
 
         cmp #$00
         beq:++++
             lda OFFSET
                     cmp #$00
-                    bne:+
+                    bne :+
                         lda #%00000001
                         ora DELETE_PLAYERS
                         sta DELETE_PLAYERS
@@ -405,7 +404,7 @@
                         lda #$01
                     :
                     cmp #$12
-                    bne:+
+                    bne :+
                         lda #%00000010
                         ora DELETE_PLAYERS
                         sta DELETE_PLAYERS
@@ -413,7 +412,7 @@
                         lda #$01
                     :
                     cmp #$24
-                    bne:+
+                    bne :+
                         lda #%00000100
                         ora DELETE_PLAYERS
                         sta DELETE_PLAYERS
@@ -421,7 +420,7 @@
                         lda #$01
                     :
                     cmp #$36
-                    bne:+
+                    bne :+
                         lda #%00001000
                         ora DELETE_PLAYERS
                         sta DELETE_PLAYERS
@@ -432,11 +431,11 @@
         ldy PLAYER_Y
         ldx PLAYER_X
         lda #$00
-        jsr check_head_collitions
+        jsr check_head_collisions
 
         ldy OFFSET
         cpy #$00
-        bne:+
+        bne :+
             and #%00001110
             ora DELETE_PLAYERS
             sta DELETE_PLAYERS
@@ -444,7 +443,7 @@
             lda #$FF
         :
         cpy #$12
-        bne:+
+        bne :+
             and #%00001101
             ora DELETE_PLAYERS
             sta DELETE_PLAYERS
@@ -452,7 +451,7 @@
             lda #$FF
         :
         cpy #$24
-        bne:+
+        bne :+
             and #%00001011
             ora DELETE_PLAYERS
             sta DELETE_PLAYERS
@@ -460,7 +459,7 @@
             lda #$FF
         :
         cpy #$36
-        bne:+
+        bne :+
             and #%00000111
             ora DELETE_PLAYERS
             sta DELETE_PLAYERS
@@ -472,26 +471,26 @@
 
 
         lda PLAYER_X
-        cmp #$02
-        bcs:+
+        cmp #$01
+        bne :+
             jsr dead
         :
 
         lda PLAYER_X
         cmp #$1E
-        bcc:+
+        bne :+
             jsr dead
         :
 
         lda PLAYER_Y
         cmp #$00
-        bcs:+
+        bne :+
             jsr dead
         :
 
         lda PLAYER_Y
         cmp #$1D
-        bcc:+
+        bne :+
             jsr dead
         :
         jmp prep_next_snake
@@ -499,7 +498,7 @@
         dead:
             lda OFFSET
             cmp #$00
-            bne:+
+            bne :+
                 lda #%00000001
                 ora DELETE_PLAYERS
                 sta DELETE_PLAYERS
@@ -507,7 +506,7 @@
                 lda #$01
             :
             cmp #$12
-            bne:+
+            bne :+
                 lda #%00000010
                 ora DELETE_PLAYERS
                 sta DELETE_PLAYERS
@@ -515,7 +514,7 @@
                 lda #$01
             :
             cmp #$24
-            bne:+
+            bne :+
                 lda #%00000100
                 ora DELETE_PLAYERS
                 sta DELETE_PLAYERS
@@ -523,7 +522,7 @@
                 lda #$01
             :
             cmp #$36
-            bne:+
+            bne :+
                 lda #%00001000
                 ora DELETE_PLAYERS
                 sta DELETE_PLAYERS
@@ -546,7 +545,7 @@
     lda DELETE_PLAYERS
     and #%00000001              ;player 1
     cmp #%00000001
-    bne:+
+    bne :+
         ldx #$00
         jsr delete_snake 
     :
@@ -554,7 +553,7 @@
     lda DELETE_PLAYERS
     and #%00000010              ;player 2
     cmp #%00000010
-    bne:+
+    bne :+
         ldx #$01
         jsr delete_snake 
     :
@@ -562,7 +561,7 @@
     lda DELETE_PLAYERS
     and #%00000100              ;player 3
     cmp #%00000100
-    bne:+
+    bne :+
         ldx #$02
         jsr delete_snake
     :
@@ -570,7 +569,7 @@
     lda DELETE_PLAYERS
     and #%00001000              ;player 4
     cmp #%00001000
-    bne:+
+    bne :+
         ldx #$03
         jsr delete_snake 
     :       
