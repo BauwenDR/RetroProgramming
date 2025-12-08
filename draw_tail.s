@@ -20,7 +20,6 @@
         lda OFFSET
         adc BYTE_LENGTH
         tax 
-
         ; get all values for initial the loop
         ldy LENGTH_MOD
         cpy #$00
@@ -41,7 +40,7 @@
             lsr TAIL_BYTE
             iny 
             jmp :-
-        :
+        :   
 
         ldy LENGTH_MOD
         cpy #$00

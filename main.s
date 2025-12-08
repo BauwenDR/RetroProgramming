@@ -28,46 +28,37 @@ lda VBLANK_OCCURED
 cmp #$01
 bne vblank_wait
 jsr init_player
+jsr init_draw_player
 
-; Wait one second before starting player movement
-initial_delay:
-jsr draw_initial_player
-lda VBLANK_OCCURED
-cmp #01
-bne :++
-  lda #$00
-  sta VBLANK_OCCURED
+jsr init_pickups
+jsr render_border
 
-  lda VBLANK_TICK_COUNT
-  cmp #$32
-  bcc :+
-    lda #$00
-    sta VBLANK_TICK_COUNT
-    ; jmp forever
-  :
-  jmp initial_delay
-:
-
-forever:
+.proc forever
+  jsr read_input
   lda VBLANK_OCCURED
   cmp #$01
-  bne :++ ; If (VBLANK_OCCURED)
+  bne :+ ; If (VBLANK_OCCURED)
     lda #$00  ; VBLANK_OCCURED = false
     sta VBLANK_OCCURED
 
-    jsr read_input
 
     lda VBLANK_TICK_COUNT
     cmp #$08
     bcc :+  ; IF(VBLANK_TICK_COUNT >= 8)
       lda #$00  ; VBLANK_TICK_COUNT = 0
       sta VBLANK_TICK_COUNT
+      jsr read_input
       jsr move_player
+      jsr read_input
       jsr reset_input
-    :
+      jsr read_input
+      jsr player_collistions
+      jsr read_input
+      jsr update_pickups
   :
-
+  
   jmp forever
+.endproc
 
 .include "nmi.s"
 .include "pushBackgroundBuffer.s"
@@ -75,18 +66,23 @@ forever:
 .include "player.s"
 .include "input.s"
 
+.include "pickups.s"
+.include "collision.s"
+.include "border.s"
+
+
 palettes:
   ; Background Palette
   .byte $1B, $18, $29, $38
   .byte $1B, $05, $16, $36
   .byte $1B, $14, $25, $35
-  .byte $1B, $0C, $11, $3C
+  .byte $1B, $2D, $27, $30
 
   ; Sprite Palette
-  .byte $0f, $18, $29, $38
-  .byte $0f, $05, $16, $36
-  .byte $0f, $14, $25, $35
-  .byte $0f, $0C, $11, $3C
+  .byte $0B, $11, $21, $31
+  .byte $0B, $05, $16, $36
+  .byte $0B, $14, $25, $35
+  .byte $0B, $2D, $27, $30
 
 ; Character memory
 .segment "CHARS"

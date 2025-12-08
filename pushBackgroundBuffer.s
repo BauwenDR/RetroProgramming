@@ -13,7 +13,7 @@
 
     ; multiply A by 3
     sta $C0
-    rol 
+    asl 
     adc $C0
 
     tay 
