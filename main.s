@@ -43,6 +43,12 @@ jsr render_border
 
 
     lda VBLANK_TICK_COUNT
+
+    cmp #$06
+    bpl :+
+      jsr delete_dead
+    :
+
     cmp #$08
     bcc :+  ; IF(VBLANK_TICK_COUNT >= 8)
       lda #$00  ; VBLANK_TICK_COUNT = 0
@@ -65,6 +71,7 @@ jsr render_border
 
 .include "player.s"
 .include "input.s"
+.include "delete_dead.s"
 
 .include "pickups.s"
 .include "collision.s"

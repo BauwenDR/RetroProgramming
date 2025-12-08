@@ -38,6 +38,8 @@ PLAYER_HEAD_4 = $0236
 PLAYER_LENGTH_4 = $0237 ; Split 6 msb lengh, 2 lsb part of head
 PLAYER_BODY_4 = $0238   ; Length of body max 16 bytes
 
+PLAYERS_DEAD = $0248
+
 PICKUP_1_X = $0680      ;msb byte oif the x says if it is alive 
 PICKUP_1_Y = $0681
 PICKUP_2_X = $0682
