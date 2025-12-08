@@ -588,7 +588,7 @@
         adc #$01
         sta PLAYER_HEAD_SPRITE + 1,y ; store tile index
 
-        .include "draw_tail.s"
+        .include "drawPlayerTail.s"
 
     jmp next_player_skip
     .proc next_player
