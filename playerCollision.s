@@ -148,55 +148,15 @@
         bne :+
             jsr dead
         :
-        jmp prep_next_snake
-
-        dead:
-            lda OFFSET
-            cmp #$00
-            bne :+
-                lda #%00000001
-                ora DELETE_PLAYERS
-                sta DELETE_PLAYERS
-
-                lda #$01
-            :
-            cmp #$12
-            bne :+
-                lda #%00000010
-                ora DELETE_PLAYERS
-                sta DELETE_PLAYERS
-
-                lda #$01
-            :
-            cmp #$24
-            bne :+
-                lda #%00000100
-                ora DELETE_PLAYERS
-                sta DELETE_PLAYERS
-
-                lda #$01
-            :
-            cmp #$36
-            bne :+
-                lda #%00001000
-                ora DELETE_PLAYERS
-                sta DELETE_PLAYERS
-
-                lda #$01
-            : 
-            rts 
-
 
         prep_next_snake:
-
-            lda OFFSET              ;get the offset to a
-            clc     
-            adc #$12                ;add 12 because the size of the player in memory is 12
-            sta OFFSET              ;store the offset in OFFSET
-            jmp next_snake          ;go to the next snake
-
-
+        lda OFFSET              ;get the offset to a
+        clc     
+        adc #$12                ;add 12 because the size of the player in memory is 12
+        sta OFFSET              ;store the offset in OFFSET
+        jmp next_snake          ;go to the next snake
     end_collisions:
+
     lda DELETE_PLAYERS
     and #%00000001              ;player 1
     cmp #%00000001
@@ -229,6 +189,43 @@
         jsr delete_snake 
     :       
     rts
+
+    .proc dead
+        lda OFFSET
+        cmp #$00
+        bne :+
+            lda #%00000001
+            ora DELETE_PLAYERS
+            sta DELETE_PLAYERS
+
+            lda #$01
+        :
+        cmp #$12
+        bne :+
+            lda #%00000010
+            ora DELETE_PLAYERS
+            sta DELETE_PLAYERS
+
+            lda #$01
+        :
+        cmp #$24
+        bne :+
+            lda #%00000100
+            ora DELETE_PLAYERS
+            sta DELETE_PLAYERS
+
+            lda #$01
+        :
+        cmp #$36
+        bne :+
+            lda #%00001000
+            ora DELETE_PLAYERS
+            sta DELETE_PLAYERS
+
+            lda #$01
+        : 
+        rts 
+    .endproc
 .endproc
 
 .proc check_body_collisions
@@ -275,8 +272,6 @@
             sta OFFSET              ;store the offset in OFFSET
             jmp next_snake          ;go to the next snake
         :                       
-        
-
 
         lda PLAYER_HEAD,y           ;getting the x location from player head
         and #%00011111              ;deleting the bits from the y position
@@ -300,9 +295,6 @@
         sta SNAKE_Y                 ;storing the start y position into memory
 
         collision_loop:
-            
-
-
             lda LENGTH              ;getting the right byte
             sec 
             sbc #$01
@@ -411,13 +403,13 @@
                 jmp next_snake          ;go to the next snake
 
     collision_found:
-        ldy OFFSET              ;load the offset in y so you know what player had the collision
-        lda #$01                ;load 1 in a so you know there has been a collision
+        ldy OFFSET              ;load the offset in y so you know what player had the collistion
+        lda #$01                ;load 1 in a so you know there has been a collistion
         rts 
     no_collision_found:
-        lda #$00                ;load 0 in a so you know there has been a collision
+        lda #$00                ;load 0 in a so you know there has been a collistion
         rts  
-.endproc 
+.endproc
 
 .proc check_head_collisions
     ;make sure that in the x register has the x value of the location that has to be checkt
@@ -442,9 +434,8 @@
     next_snake:
         ldy OFFSET                  ;load the offset in y
         cpy #$48                    ;check if the offset is 48 (if it is it means that is done with looping)
-        bne :+       
-            lda COLLISION
-            rts                     ;if it is 48 -> end the function
+        bne :+                      ;if it is 48 -> end the function
+            jmp end
         :
 
         lda PLAYER_LENGTH,y
@@ -476,56 +467,56 @@
         ora SNAKE_Y                 ;combining the 2 prev opperations
         sta SNAKE_Y                 ;storing the start y position into memory
 
-
-
         lda SNAKE_X
-            cmp CHECK_X
-            bne :++++
-                lda SNAKE_Y
-                cmp CHECK_Y
-                bne :++++
-                    lda OFFSET
-                    cmp #$00
-                    bne :+
-                        lda #%00000001
-                        ora COLLISION
-                        sta COLLISION
+        cmp CHECK_X
+        bne prep_next_snake
+            lda SNAKE_Y
+            cmp CHECK_Y
+            bne prep_next_snake
+                lda OFFSET
+                cmp #$00
+                bne :+
+                    lda #%00000001
+                    ora COLLISION
+                    sta COLLISION
 
-                        lda #$01
-                    :
-                    cmp #$12
-                    bne :+
-                        lda #%00000010
-                        ora COLLISION
-                        sta COLLISION
+                    lda #$01
+                :
 
-                        lda #$01
-                    :
-                    cmp #$24
-                    bne :+
-                        lda #%00000100
-                        ora COLLISION
-                        sta COLLISION
+                cmp #$12
+                bne :+
+                    lda #%00000010
+                    ora COLLISION
+                    sta COLLISION
 
-                        lda #$01
-                    :
-                    cmp #$36
-                    bne :+
-                        lda #%00001000
-                        ora COLLISION
-                        sta COLLISION
+                    lda #$01
+                :
 
-                        lda #$01
-                    :
+                cmp #$24
+                bne :+
+                    lda #%00000100
+                    ora COLLISION
+                    sta COLLISION
 
+                    lda #$01
+                :
 
+                cmp #$36
+                bne :+
+                    lda #%00001000
+                    ora COLLISION
+                    sta COLLISION
 
+                    lda #$01
+                :
         prep_next_snake:
-    
+            tya                     ;get the offset to a
+            clc     
+            adc #$12                ;add 12 because the size of the player in memory is 12
+            sta OFFSET              ;store the offset in OFFSET
+            jmp next_snake          ;go to the next snake
 
-        tya                     ;get the offset to a
-        clc     
-        adc #$12                ;add 12 because the size of the player in memory is 12
-        sta OFFSET              ;store the offset in OFFSET
-        jmp next_snake          ;go to the next snake
+    end:
+        lda COLLISION
+        rts
 .endproc
