@@ -61,6 +61,18 @@ start_delay:
   cmp #$64
   bne start_delay
 
+lda #$00
+sta VBLANK_OCCURED
+vblank_wait_2:
+lda VBLANK_OCCURED
+cmp #$01
+bne vblank_wait_2
+lda #$00
+sta VBLANK_OCCURED
+
+jsr init_player
+jsr init_draw_player
+
 .proc forever
   jsr read_input
   lda VBLANK_OCCURED
@@ -96,7 +108,7 @@ start_delay:
       jsr read_input
       jsr reset_input
       jsr read_input
-      jsr player_collistions
+      jsr player_collisions
       jsr read_input
       jsr update_pickups
   :
@@ -116,16 +128,17 @@ start_delay:
 .include "nmi.s"
 .include "pushBackgroundBuffer.s"
 
+.include "input.s"
+.include "border.s"
+
 .include "player.s"
 .include "playerInit.s"
 .include "playerAddSegment.s"
-.include "delete_dead.s"
-
-.include "input.s"
+.include "playerDeleteSnake.s"
+.include "playerCollision.s"
 
 .include "pickups.s"
-.include "collision.s"
-.include "border.s"
+.include "pickupCollision.s"
 
 .include "render_titlescreen.s"
 
