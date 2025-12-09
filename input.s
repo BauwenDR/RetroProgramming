@@ -1,3 +1,5 @@
+INPUT_RAM = $01
+
 .proc read_input
     lda #$01    ; Strobe the controllers, so we have the most recent input values
     sta JOYPAD1 ; We only need to strobe the input once, as enabling the stobe bit strobes all controllers
@@ -14,8 +16,7 @@
 .endproc
 
 .proc read_controller_one
-    INPUT_RAM = $01
-
+    lda #$01
     sta INPUT_RAM
     lsr
 
@@ -32,8 +33,6 @@
 .endproc
 
 .proc read_controller_two
-    INPUT_RAM = $01
-
     lda #$01
     sta INPUT_RAM
     lsr

@@ -102,7 +102,7 @@
         tay 
         sty TEMP_Y
 
-        jsr check_body_collisions        ;do the collistions checking with snakes
+        jsr check_body_collisions        ;do the collisions checking with snakes
 
         cmp #$00
         beq :+

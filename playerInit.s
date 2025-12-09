@@ -16,13 +16,13 @@
 
     ; Player 1
     lda #$24                     ; x = 4, y = 1
-    sta PLAYER_HEAD
+    sta PLAYER_HEAD_1
 
     lda #%00001100               ; Length = 3, y = 1
-    sta PLAYER_LENGTH
+    sta PLAYER_LENGTH_1
 
     lda #%00000000               ; First 3 body bits moving right
-    sta PLAYER_BODY
+    sta PLAYER_BODY_1
 
     ; Player 2
     lda #$7D                     ; x = 29, y = 3

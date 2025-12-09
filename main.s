@@ -71,7 +71,7 @@ jsr init_draw_player
       jsr read_input
       jsr reset_input
       jsr read_input
-      jsr player_collistions
+      jsr player_collisions
       jsr read_input
       jsr update_pickups
   :
@@ -82,14 +82,17 @@ jsr init_draw_player
 .include "nmi.s"
 .include "pushBackgroundBuffer.s"
 
-.include "playerInit.s"
-.include "player.s"
 .include "input.s"
-.include "delete_dead.s"
+.include "border.s"
+
+.include "player.s"
+.include "playerInit.s"
+.include "playerAddSegment.s"
+.include "playerDeleteSnake.s"
+.include "playerCollision.s"
 
 .include "pickups.s"
-.include "collision.s"
-.include "border.s"
+.include "pickupCollision.s"
 
 
 palettes:
