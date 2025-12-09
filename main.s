@@ -22,18 +22,44 @@
 .include "start.s"
 .include "random.s"
 
-;; Wait for first VBLANK to have occured
+jsr start_screen_main
+jsr render_border
+reset_game:
 lda #$00
-sta VBLANK_OCCURED
-vblank_wait:
-lda VBLANK_OCCURED
-cmp #$01
-bne vblank_wait
+sta RIGHT_SCREEN
+
+;; Wait for first VBLANK to have occured
+jsr wait_for_nmi
 lda #$00
 sta VBLANK_OCCURED
 
+ldy #$00
+lda #$00
+:
+  sta PLAYER_HEAD,y
+  iny 
+  cpy #$49
+  bne:-
+
+
 jsr init_pickups
-jsr render_border
+
+jsr wait_for_nmi
+lda #$00
+sta VBLANK_OCCURED
+
+jsr init_player
+jsr init_draw_player
+
+.import Player
+
+lda #$00
+sta VBLANK_TICK_COUNT
+jsr delete_press_to_start
+start_delay:
+  lda VBLANK_TICK_COUNT
+  cmp #$64
+  bne start_delay
 
 lda #$00
 sta VBLANK_OCCURED
@@ -61,6 +87,17 @@ jsr init_draw_player
     bpl :+
       jsr delete_dead
     :
+    
+    cmp #$07
+    bne:+
+
+      
+      lda PLAYERS_DEAD
+      and #%00001111
+      cmp #$03
+      bcc:+
+        jmp end_screen
+    :
 
     cmp #$08
     bcc :+  ; IF(VBLANK_TICK_COUNT >= 8)
@@ -77,7 +114,16 @@ jsr init_draw_player
   :
   
   jmp forever
+
+
 .endproc
+
+.proc end_screen
+    jsr end_screen_main
+    jmp reset_game
+    rts 
+.endproc
+
 
 .include "nmi.s"
 .include "pushBackgroundBuffer.s"
@@ -94,15 +140,17 @@ jsr init_draw_player
 .include "pickups.s"
 .include "pickupCollision.s"
 
+.include "render_titlescreen.s"
+
 
 palettes:
-  ; Background Palette
+  ; Sprite Palette
   .byte $1B, $18, $29, $38
   .byte $1B, $05, $16, $36
   .byte $1B, $14, $25, $35
   .byte $1B, $2D, $27, $30
 
-  ; Sprite Palette
+  ; Background Palette
   .byte $0B, $11, $21, $31
   .byte $0B, $05, $16, $36
   .byte $0B, $14, $25, $35

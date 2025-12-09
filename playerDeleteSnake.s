@@ -29,7 +29,7 @@
     :
     
     sta PLAYERS_DEAD
-
+    inc PLAYERS_DEAD
     rts
 .endproc
 

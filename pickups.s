@@ -34,6 +34,15 @@
         jsr new_pickup_location
     :
 
+    lda PLAYERS_DEAD
+    and #%00001111
+    cmp #$02
+    bcc:+
+        lda #$00 
+        sta PICKUPS_SPRITE_2 + 1
+        jmp end_pickup
+    :
+
     lda #%00011111                  ;lose the bit that says if it exist
     and PICKUP_2_X
     tax 
@@ -45,6 +54,15 @@
         lda #$00
         sta PICKUP_2_X
         jsr new_pickup_location
+    :
+
+    lda PLAYERS_DEAD
+    and #%00001111
+    cmp #$01
+    bcc:+
+        lda #$00 
+        sta PICKUPS_SPRITE_3 + 1
+        jmp end_pickup
     :
 
     lda #%00011111                  ;lose the bit that says if it exist
@@ -60,6 +78,7 @@
         jsr new_pickup_location
     :
 
+    end_pickup:
     rts 
 .endproc
 
