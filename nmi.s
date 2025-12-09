@@ -20,6 +20,8 @@ loop_counter = $c1
     lda #$00
     sta loop_counter
 
+   
+
     draw_tile:
         ; get buffer size
         lda $0600
@@ -65,7 +67,17 @@ loop_counter = $c1
     sta $2006
     sta $2006
 
-    lda #$00 ; set to (0, 0)
+    lda RIGHT_SCREEN
+    cmp #$01
+    bne:+
+        lda #%10010001   ; enable NMI, select $2400 as base nametable
+        sta $2000
+        jmp:++
+    :
+        lda #%10000000  ; enable NMI, select $2400 as base nametable
+        sta $2000
+    :
+    lda #$00
     sta $2005
     sta $2005
 

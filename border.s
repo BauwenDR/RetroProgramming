@@ -194,3 +194,52 @@
 
     rts 
 .endproc
+
+.proc clean_upcrew
+    X_LOCATION = $01
+    Y_LOCATION = $02
+
+    lda #$20
+    sta X_LOCATION
+    lda #$22
+    sta Y_LOCATION
+    jsr wait_for_nmi
+
+
+    :
+        ldx X_LOCATION
+        ldy Y_LOCATION
+        lda #$00
+        jsr push_background_buffer
+
+        inc Y_LOCATION
+        lda Y_LOCATION
+        and #%00011111
+        cmp #$1E
+        bne:-
+            jsr wait_for_nmi
+            jsr wait_for_nmi
+
+            lda Y_LOCATION
+            and #%11100000
+            ora #%00000010
+            sta Y_LOCATION
+            clc 
+            adc #$20
+            sta Y_LOCATION
+            lda X_LOCATION
+            adc #$00
+            sta X_LOCATION
+
+            lda Y_LOCATION
+            and #%11100000
+            cmp #%10100000
+            bne:-
+            lda X_LOCATION
+            cmp #$23
+            bne:-
+
+	rts 
+
+.endproc
+
