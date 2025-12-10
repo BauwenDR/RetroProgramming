@@ -40,6 +40,7 @@
     bcc:+
         lda #$00 
         sta PICKUPS_SPRITE_2 + 1
+        sta PICKUPS_SPRITE_3 + 1
         jmp end_pickup
     :
 
