@@ -7,6 +7,7 @@
     jsr draw_press_to_start
 
     forever:
+        jsr galois16
         jsr read_input
         ldx #$00
         :
