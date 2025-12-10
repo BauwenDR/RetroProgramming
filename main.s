@@ -13,7 +13,6 @@
   ;; External interrupt IRQ (unused)
   .addr 0
 
-
 .segment "STARTUP"
 .segment "CODE"
 
@@ -21,6 +20,14 @@
 
 .include "start.s"
 .include "random.s"
+
+ldx #<music_data_untitled
+ldy #>music_data_untitled
+lda #0 ; NTSC
+jsr famistudio_init
+
+lda #0
+jsr famistudio_music_play
 
 jsr start_screen_main
 jsr render_border
@@ -39,7 +46,7 @@ lda #$00
   sta PLAYER_HEAD,y
   iny 
   cpy #$49
-  bne:-
+  bne :-
 
 
 jsr init_pickups
@@ -50,8 +57,6 @@ sta VBLANK_OCCURED
 
 jsr init_player
 jsr init_draw_player
-
-.import Player
 
 lda #$00
 sta VBLANK_TICK_COUNT
@@ -142,6 +147,8 @@ jsr init_draw_player
 
 .include "render_titlescreen.s"
 
+.include "famistudio_ca65.s"
+.include "nokiaSong.s"
 
 palettes:
   ; Sprite Palette
