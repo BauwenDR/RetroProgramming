@@ -1,3 +1,6 @@
+.segment "ZEROPAGE"
+  .res 18 ; make sure the sound doesn't override our own variables
+
 .segment "HEADER"
   ; .byte "NES", $1A      ; iNES header identifier
   .byte $4E, $45, $53, $1A
