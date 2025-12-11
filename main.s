@@ -24,11 +24,13 @@
 .include "start.s"
 .include "random.s"
 
-ldx #<music_data_untitled
-ldy #>music_data_untitled
-lda #0 ; NTSC
+ldx #<music_data_swimming
+ldy #>music_data_swimming
+lda #0 ; PAL
 jsr famistudio_init
 
+ldx #<music_data_swimming
+ldy #>music_data_swimming
 lda #0
 jsr famistudio_music_play
 
@@ -151,7 +153,7 @@ jsr init_draw_player
 .include "render_titlescreen.s"
 
 .include "famistudio_ca65.s"
-.include "nokiaSong.s"
+.include "songMainMenu.s"
 
 palettes:
   ; Sprite Palette
