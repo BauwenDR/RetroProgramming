@@ -24,16 +24,6 @@
 .include "start.s"
 .include "random.s"
 
-ldx #<music_data_swimming
-ldy #>music_data_swimming
-lda #0 ; PAL
-jsr famistudio_init
-
-ldx #<music_data_swimming
-ldy #>music_data_swimming
-lda #0
-jsr famistudio_music_play
-
 jsr start_screen_main
 jsr render_border
 reset_game:
@@ -60,8 +50,16 @@ jsr wait_for_nmi
 lda #$00
 sta VBLANK_OCCURED
 
-jsr init_player
-jsr init_draw_player
+jsr famistudio_music_stop
+ldx #<music_data_bold
+ldy #>music_data_bold
+lda #0 ; PAL
+jsr famistudio_init
+
+ldx #<music_data_bold
+ldy #>music_data_bold
+lda #0
+jsr famistudio_music_play
 
 lda #$00
 sta VBLANK_TICK_COUNT
@@ -124,8 +122,6 @@ jsr init_draw_player
   :
   
   jmp forever
-
-
 .endproc
 
 .proc end_screen
@@ -150,10 +146,11 @@ jsr init_draw_player
 .include "pickups.s"
 .include "pickupCollision.s"
 
-.include "render_titlescreen.s"
+.include "renderTitleScreen.s"
 
-.include "famistudio_ca65.s"
-.include "songMainMenu.s"
+.include "famistudio.s"
+.include "songSwimming.s"
+.include "songBold.s"
 
 palettes:
   ; Sprite Palette
