@@ -61,6 +61,10 @@ ldy #>music_data_bold
 lda #0
 jsr famistudio_music_play
 
+jsr init_player
+jsr init_draw_player
+
+
 lda #$00
 sta VBLANK_TICK_COUNT
 jsr delete_press_to_start
@@ -77,9 +81,6 @@ cmp #$01
 bne vblank_wait_2
 lda #$00
 sta VBLANK_OCCURED
-
-jsr init_player
-jsr init_draw_player
 
 .proc forever
   jsr read_input
