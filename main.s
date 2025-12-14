@@ -32,6 +32,7 @@ jsr famistudio_sfx_init
 
 jsr start_screen_main
 jsr render_border
+
 reset_game:
 lda #$00
 sta RIGHT_SCREEN
@@ -69,7 +70,7 @@ jsr famistudio_music_play
 
 jsr init_player
 jsr init_draw_player
-
+jsr wait_for_nmi
 
 lda #$00
 sta VBLANK_TICK_COUNT
