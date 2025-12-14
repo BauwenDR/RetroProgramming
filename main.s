@@ -1,3 +1,6 @@
+.segment "ZEROPAGE"
+  .res 18 ; make sure the sound doesn't override our own variables
+
 .segment "HEADER"
   ; .byte "NES", $1A      ; iNES header identifier
   .byte $4E, $45, $53, $1A
@@ -13,7 +16,6 @@
   ;; External interrupt IRQ (unused)
   .addr 0
 
-
 .segment "STARTUP"
 .segment "CODE"
 
@@ -22,8 +24,15 @@
 .include "start.s"
 .include "random.s"
 
+; Initialise sounds effects
+ldx #<sounds
+ldy #>sounds
+lda #$00
+jsr famistudio_sfx_init
+
 jsr start_screen_main
 jsr render_border
+
 reset_game:
 lda #$00
 sta RIGHT_SCREEN
@@ -39,7 +48,7 @@ lda #$00
   sta PLAYER_HEAD,y
   iny 
   cpy #$49
-  bne:-
+  bne :-
 
 
 jsr init_pickups
@@ -48,10 +57,20 @@ jsr wait_for_nmi
 lda #$00
 sta VBLANK_OCCURED
 
+jsr famistudio_music_stop
+ldx #<music_data_bold
+ldy #>music_data_bold
+lda #0 ; PAL
+jsr famistudio_init
+
+ldx #<music_data_bold
+ldy #>music_data_bold
+lda #0
+jsr famistudio_music_play
+
 jsr init_player
 jsr init_draw_player
-
-.import Player
+jsr wait_for_nmi
 
 lda #$00
 sta VBLANK_TICK_COUNT
@@ -69,9 +88,6 @@ cmp #$01
 bne vblank_wait_2
 lda #$00
 sta VBLANK_OCCURED
-
-jsr init_player
-jsr init_draw_player
 
 .proc forever
   jsr read_input
@@ -114,8 +130,6 @@ jsr init_draw_player
   :
   
   jmp forever
-
-
 .endproc
 
 .proc end_screen
@@ -140,8 +154,12 @@ jsr init_draw_player
 .include "pickups.s"
 .include "pickupCollision.s"
 
-.include "render_titlescreen.s"
+.include "renderTitleScreen.s"
 
+.include "famistudio.s"
+.include "songSwimming.s"
+.include "songBold.s"
+.include "soundEffects.s"
 
 palettes:
   ; Sprite Palette

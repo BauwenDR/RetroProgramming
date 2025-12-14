@@ -56,7 +56,7 @@ loop_counter = $c1
         ; check if we have reached the limit of background tile updates
         inc loop_counter
         lda loop_counter
-        cmp #24 ; (this is in decimal) max amount of of tiles updated per frame is 19 due to limited clock cycles
+        cmp #25 ; (this is in decimal) max amount of of tiles updated per frame is 19 due to limited clock cycles
         bne draw_tile
 
     skip_tile_drawing:
@@ -85,6 +85,8 @@ loop_counter = $c1
     lda #$01 
     sta VBLANK_OCCURED
     inc VBLANK_TICK_COUNT
+
+    jsr famistudio_update
 
     ; restore registers
     pla ; Y

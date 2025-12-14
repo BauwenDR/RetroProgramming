@@ -1,4 +1,15 @@
 .proc start_screen_main
+	jsr famistudio_music_stop
+	ldx #<music_data_swimming
+	ldy #>music_data_swimming
+	lda #0 ; PAL
+	jsr famistudio_init
+
+	ldx #<music_data_swimming
+	ldy #>music_data_swimming
+	lda #0
+	jsr famistudio_music_play
+
     lda #$01
     sta RIGHT_SCREEN
 
@@ -28,6 +39,17 @@
 
 
 .proc end_screen_main
+	jsr famistudio_music_stop
+	ldx #<music_data_swimming
+	ldy #>music_data_swimming
+	lda #0 ; PAL
+	jsr famistudio_init
+
+	ldx #<music_data_swimming
+	ldy #>music_data_swimming
+	lda #0
+	jsr famistudio_music_play
+
     lda #$01
     sta RIGHT_SCREEN
     jsr clean_sprites

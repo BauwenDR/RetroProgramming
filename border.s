@@ -186,7 +186,7 @@
 
 
         lda VBLANK_TICK_COUNT
-        cmp #$0D 
+        cmp #$0F 
         bne :+
             rts 
         :
