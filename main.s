@@ -24,6 +24,12 @@
 .include "start.s"
 .include "random.s"
 
+; Initialise sounds effects
+ldx #<sounds
+ldy #>sounds
+lda #$00
+jsr famistudio_sfx_init
+
 jsr start_screen_main
 jsr render_border
 reset_game:
@@ -152,6 +158,7 @@ sta VBLANK_OCCURED
 .include "famistudio.s"
 .include "songSwimming.s"
 .include "songBold.s"
+.include "soundEffects.s"
 
 palettes:
   ; Sprite Palette

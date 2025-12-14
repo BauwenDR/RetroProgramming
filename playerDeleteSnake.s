@@ -30,6 +30,12 @@
     
     sta PLAYERS_DEAD
     inc PLAYERS_DEAD
+
+    ; Play sound effect
+    lda #$01
+    ldx FAMISTUDIO_SFX_CH3
+    jsr famistudio_sfx_play
+
     rts
 .endproc
 
