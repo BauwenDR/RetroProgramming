@@ -1017,153 +1017,118 @@
 	
 	;B
 	ldx #$27
-	ldy #$A3
+	ldy #$A6
 	lda #$C2
 	jsr push_background_buffer
 
 	;A
 	ldx #$27
-	ldy #$A4
+	ldy #$A7
 	lda #$C1
 	jsr push_background_buffer
 
 	;U
 	ldx #$27
-	ldy #$A5
+	ldy #$A8
 	lda #$D5
 	jsr push_background_buffer
 
 	;W
 	ldx #$27
-	ldy #$A6
+	ldy #$A9
 	lda #$D7
 	jsr push_background_buffer
 
 	;E
 	ldx #$27
-	ldy #$A7
+	ldy #$AA
 	lda #$C5
 	jsr push_background_buffer
 
 	;N
 	ldx #$27
-	ldy #$A8
+	ldy #$AB
 	lda #$CE
 	jsr push_background_buffer
 
 	;,
 	ldx #$27
-	ldy #$A9
+	ldy #$AC
 	lda #$AC
 	jsr push_background_buffer
 
 	;T
 	ldx #$27
-	ldy #$AA
+	ldy #$AD
 	lda #$D4
 	jsr push_background_buffer
 
 	;E
 	ldx #$27
-	ldy #$AB
+	ldy #$AE
 	lda #$C5
 	jsr push_background_buffer
 
 	;U
 	ldx #$27
-	ldy #$AC
+	ldy #$AF
 	lda #$D5
 	jsr push_background_buffer
 
 	;N
 	ldx #$27
-	ldy #$AD
+	ldy #$B0
 	lda #$CE
 	jsr push_background_buffer
 
 	;,
 	ldx #$27
-	ldy #$AE
+	ldy #$B1
 	lda #$AC
 	jsr push_background_buffer
 
 	;M
 	ldx #$27
-	ldy #$AF
+	ldy #$B2
 	lda #$CD
 	jsr push_background_buffer
 
 	;A
 	ldx #$27
-	ldy #$B0
+	ldy #$B3
 	lda #$C1
 	jsr push_background_buffer
 
 	;T
 	ldx #$27
-	ldy #$B1
+	ldy #$B4
 	lda #$D4
 	jsr push_background_buffer
 
 	;T
 	ldx #$27
-	ldy #$B2
+	ldy #$B5
 	lda #$D4
 	jsr push_background_buffer
 
 	;I
 	ldx #$27
-	ldy #$B3
+	ldy #$B6
 	lda #$C9
 	jsr push_background_buffer
 
 	;A
 	ldx #$27
-	ldy #$B4
+	ldy #$B7
 	lda #$C1
 	jsr push_background_buffer
 
 	;S
 	ldx #$27
-	ldy #$B5
+	ldy #$B8
 	lda #$D3
 	jsr push_background_buffer
 
-	;,
-	ldx #$27
-	ldy #$B6
-	lda #$AC
-	jsr push_background_buffer
-
-	;K
-	ldx #$27
-	ldy #$B7
-	lda #$CB
-	jsr push_background_buffer
-
-	;A
-	ldx #$27
-	ldy #$B8
-	lda #$C1
-	jsr push_background_buffer
-
-	;R
-	ldx #$27
-	ldy #$B9
-	lda #$D2
-	jsr push_background_buffer
-
-	;A
-	ldx #$27
-	ldy #$BA
-	lda #$C1
-	jsr push_background_buffer
-
-	;N
-	ldx #$27
-	ldy #$BB
-	lda #$CE
-	jsr push_background_buffer
 
 
     rts 
