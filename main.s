@@ -30,18 +30,20 @@ ldy #>sounds
 lda #$00
 jsr famistudio_sfx_init
 
+; Show start screen and only continue after a button has been pressed
 jsr start_screen_main
 jsr render_border
 
+; Wait for two VBLANKs after rendering the border (if we dont do this, some tiles will be missing)
+jsr wait_for_nmi
+jsr wait_for_nmi
+
+; Resetting the player locations and lengths to predetermined values
 reset_game:
 lda #$00
 sta RIGHT_SCREEN
 
-;; Wait for first VBLANK to have occured
-jsr wait_for_nmi
-lda #$00
-sta VBLANK_OCCURED
-
+; Reset player bodies memory
 ldy #$00
 lda #$00
 :
@@ -50,9 +52,10 @@ lda #$00
   cpy #$49
   bne :-
 
-
+; Also spawn the first three pickups
 jsr init_pickups
 
+; Wait for another VBLANK just to be sure and then start initialising the menu music
 jsr wait_for_nmi
 lda #$00
 sta VBLANK_OCCURED
@@ -68,46 +71,45 @@ ldy #>music_data_bold
 lda #0
 jsr famistudio_music_play
 
+; Draw the players in their initial locations
 jsr init_player
 jsr init_draw_player
 jsr wait_for_nmi
 
+; Reset VBLANK tick count to 0 so that our main loop will work properly
 lda #$00
 sta VBLANK_TICK_COUNT
+
+; Delete text saying press start`
 jsr delete_press_to_start
+; Wait for 100 VBLANKS (2 seconds) and then start game play
 start_delay:
   lda VBLANK_TICK_COUNT
   cmp #$64
   bne start_delay
 
+; Reset VBLANK count once again after the delay, the main loop needs these values between 0 and 8
 lda #$00
-sta VBLANK_OCCURED
-vblank_wait_2:
-lda VBLANK_OCCURED
-cmp #$01
-bne vblank_wait_2
-lda #$00
-sta VBLANK_OCCURED
+sta VBLANK_TICK_COUNT
 
+; Main game loop
 .proc forever
   jsr read_input
   lda VBLANK_OCCURED
   cmp #$01
-  bne :+ ; If (VBLANK_OCCURED)
+  bne no_vblank ; If (VBLANK_OCCURED)
     lda #$00  ; VBLANK_OCCURED = false
     sta VBLANK_OCCURED
 
     lda VBLANK_TICK_COUNT
 
-    cmp #$06
+    cmp #$06 ; if (VBLANK_TICK_COUNT <= 6)
     bpl :+
       jsr delete_dead
     :
     
-    cmp #$07
-    bne:+
-
-      
+    cmp #$07 ; if (VBLANK_TICK_COUNT == 7)
+    bne :+
       lda PLAYERS_DEAD
       and #%00001111
       cmp #$03
@@ -115,8 +117,8 @@ sta VBLANK_OCCURED
         jmp end_screen
     :
 
-    cmp #$08
-    bcc :+  ; IF(VBLANK_TICK_COUNT >= 8)
+    cmp #$08 ; IF(VBLANK_TICK_COUNT >= 8)
+    bcc :+  
       lda #$00  ; VBLANK_TICK_COUNT = 0
       sta VBLANK_TICK_COUNT
       jsr read_input
@@ -127,7 +129,8 @@ sta VBLANK_OCCURED
       jsr player_collisions
       jsr read_input
       jsr update_pickups
-  :
+    :
+  no_vblank:
   
   jmp forever
 .endproc

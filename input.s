@@ -1,9 +1,14 @@
 INPUT_RAM = $01
 
+; File for handling input, the results of the methods can be found in the CONTROLLER1 to CONTROLLER4.
+; The code used is adapted from the 4-score example found on https://www.nesdev.org/wiki/Random_number_generator
+
+; We read input and then 'and' the result with what was already present in the CONTROLLER memory address.
+; Since we call this function as often as possible during downtime, we won't miss any input and will have all inputs that occured since last reset.
 .proc read_input
     lda #$01    ; Strobe the controllers, so we have the most recent input values
     sta JOYPAD1 ; We only need to strobe the input once, as enabling the stobe bit strobes all controllers
-    lsr a       ; https://www.nesdev.org/wiki/Four_player_adapters#Four_Score
+    lsr a       
     sta JOYPAD1
 
     ldx 0
@@ -49,6 +54,7 @@ INPUT_RAM = $01
     rts
 .endproc
 
+; Resets the CONTROLLER1 to CONTROLLER4 values back to 0 (no keys pressed)
 .proc reset_input
     lda #$00
     sta CONTROLLER1

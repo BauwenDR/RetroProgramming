@@ -1133,13 +1133,3 @@
 
     rts 
 .endproc
-
-.proc wait_for_nmi
-    lda #$00
-    sta VBLANK_OCCURED
-    vblank_wait:
-    lda VBLANK_OCCURED
-    cmp #$01
-    bne vblank_wait
-    rts 
-.endproc
