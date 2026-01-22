@@ -21,7 +21,7 @@ lda OFFSET
 adc BYTE_LENGTH
 tax 
 
-; get all values for initial the loop
+; get all initial values for the loop
 ldy LENGTH_MOD
 cpy #$00
 bne :+
@@ -36,7 +36,7 @@ cpy #$00
 bne :+
     ldy #$04
 :
-
+; rotates the first 2 bits of the body to the end of the byte
 cpy #$04
 beq :+
     lsr TAIL_BYTE
@@ -52,6 +52,7 @@ bne :+
     dex 
 :
 
+; loops through every part of the body until it gets to the end
 tail_position_loop:
     lda TAIL_BYTE
     and #$03
@@ -61,7 +62,7 @@ tail_position_loop:
     bne :++
     lda TAIL_POSITION
 
-    cmp #$00
+    cmp #$00 ; dir = right, going left
         bne :+ ; if overflow
             dec TAIL_POSITION + 1
         :
@@ -69,7 +70,7 @@ tail_position_loop:
         jmp end_tail_crumb_check
     :
 
-    cmp #$01
+    cmp #$01 ; dir = left, going right
     bne :++
         inc TAIL_POSITION
         bne :+ ; if overflow
@@ -78,7 +79,7 @@ tail_position_loop:
         jmp end_tail_crumb_check
     :
 
-    cmp #$02
+    cmp #$02 ; dir = down, going up
     bne :++
         sec 
         lda TAIL_POSITION
@@ -90,7 +91,7 @@ tail_position_loop:
         jmp end_tail_crumb_check
     :
 
-    cmp #$03
+    cmp #$03 ; dir = up, going down
     bne :++
         clc 
         lda TAIL_POSITION
@@ -133,11 +134,13 @@ tail_position_loop:
 
 end_tail_calculations:
 
+; remove tail from previous frame
 ldx TAIL_POSITION + 1
 ldy TAIL_POSITION
 lda #$00
 jsr push_background_buffer
 
+; place tail for current frame
 ldx PREV_TAIL_POSITION + 1
 ldy PREV_TAIL_POSITION
 lda #$0B
