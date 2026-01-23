@@ -7,9 +7,9 @@
             "preLaunchTask": "Build NES",
             "suppressMultipleSessionWarning": false,
             "name": "Debug rom with mesen",
-            "romPath": "${workspaceFolder}/main.nes",
-            "dbgPath": "${workspaceFolder}/main.dbg",
-            "program": "${workspaceFolder}/launch-mesen.sh",
+            "romPath": "${workspaceFolder}/build/main.nes",
+            "dbgPath": "${workspaceFolder}/build/main.dbg",
+            "program": "C:\\Users\\Matti\\Desktop\\Mesen.exe",
             "sourcePath": "${workspaceFolder}/",
             "stopOnEntry": false,
             "resetOnEntry": true

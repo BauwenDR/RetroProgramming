@@ -4,12 +4,12 @@
       {
         "label": "Assemble and Link NES",
         "type": "shell",
-        "command": "ca65",
+        "command": "C:\\cc65\\bin\\ca65",
         "args": [
           "main.s",
           "-g",
           "-o",
-          "main.o"
+          "build/main.o"
         ],
         "group": {
           "kind": "build",
@@ -20,12 +20,12 @@
       {
         "label": "Build NES",
         "type": "shell",
-        "command": "ld65",
+        "command": "C:\\cc65\\bin\\ld65",
         "args": [
           "-t", "nes",
-          "-o", "main.nes",
-          "main.o",
-          "--dbgfile", "main.dbg"
+          "-o", "build/main.nes",
+          "build/main.o",
+          "--dbgfile", "build/main.dbg"
         ],
         "group": "build",
         "dependsOn": "Assemble and Link NES",

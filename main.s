@@ -30,26 +30,31 @@ ldy #>sounds
 lda #$00
 jsr famistudio_sfx_init
 
-; Show start screen and only continue after a button has been pressed
+;load the startscreen on the second NameTable and wait for the first input
 jsr start_screen_main
 jsr render_border
 
-; Wait for two VBLANKs after rendering the border (if we dont do this, some tiles will be missing)
-jsr wait_for_nmi
-jsr wait_for_nmi
 
-; Resetting the player locations and lengths to predetermined values
 reset_game:
+;set the variable of RIGHT_SCREEN to #$00 
+;so the ppu knows it has to render the left nametable 
 lda #$00
 sta RIGHT_SCREEN
 
-; Reset player bodies memory
+;; Wait for first VBLANK to have occured
+jsr wait_for_nmi
+lda #$00
+sta VBLANK_OCCURED
+
+;reset the a and y registers 
 ldy #$00
 lda #$00
+
+;clean the memory of the player data so no random garbage is leftover
 :
-  sta PLAYER_HEAD,y
+  sta PLAYER_HEAD,y         ;location of PLAYER_HEAD offset by y
   iny 
-  cpy #$49
+  cpy #$49                  ;#$49 because all the data of the snakes are #$48 long
   bne :-
 
 ; Also spawn the first three pickups
@@ -59,6 +64,7 @@ jsr init_pickups
 jsr wait_for_nmi
 lda #$00
 sta VBLANK_OCCURED
+
 
 jsr famistudio_music_stop
 ldx #<music_data_bold
@@ -76,13 +82,13 @@ jsr init_player
 jsr init_draw_player
 jsr wait_for_nmi
 
-; Reset VBLANK tick count to 0 so that our main loop will work properly
+;reset vblack tick count
 lda #$00
 sta VBLANK_TICK_COUNT
-
-; Delete text saying press start`
+;the text "Press a to start" wil never be used agains so we remove it here
 jsr delete_press_to_start
-; Wait for 100 VBLANKS (2 seconds) and then start game play
+
+; this delay is so the game doesnt start instanly and player have time to prepere
 start_delay:
   lda VBLANK_TICK_COUNT
   cmp #$64
@@ -92,9 +98,10 @@ start_delay:
 lda #$00
 sta VBLANK_TICK_COUNT
 
-; Main game loop
+
+;main loop
 .proc forever
-  jsr read_input
+  jsr read_input 
   lda VBLANK_OCCURED
   cmp #$01
   bne no_vblank ; If (VBLANK_OCCURED)
@@ -103,26 +110,27 @@ sta VBLANK_TICK_COUNT
 
     lda VBLANK_TICK_COUNT
 
-    cmp #$06 ; if (VBLANK_TICK_COUNT <= 6)
-    bpl :+
-      jsr delete_dead
+    cmp #$06 
+    bpl :+                    ;if the VBlank tick count is 5 or less 
+      jsr delete_dead         ;clean up the bodies
     :
     
-    cmp #$07 ; if (VBLANK_TICK_COUNT == 7)
-    bne :+
-      lda PLAYERS_DEAD
-      and #%00001111
-      cmp #$03
-      bcc:+
-        jmp end_screen
+    cmp #$07                  ;if the VBlank tick count is 7
+    bne:+
+      lda PLAYERS_DEAD        ;load the player dead data
+      ;the 4 MSB are data for induvidual players and the 4 LSB are a count of the dead players
+      and #%00001111          ;we need the count of dead players          
+      cmp #$03                
+      bcc:+                   ;if there are 3 players dead
+        jmp end_screen        ;go to endscreen
     :
 
-    cmp #$08 ; IF(VBLANK_TICK_COUNT >= 8)
-    bcc :+  
-      lda #$00  ; VBLANK_TICK_COUNT = 0
-      sta VBLANK_TICK_COUNT
-      jsr read_input
-      jsr move_player
+    cmp #$08                  ;if the VBlank tick count is 7
+    bcc :+                    ; IF(VBLANK_TICK_COUNT >= 8)
+      lda #$00                
+      sta VBLANK_TICK_COUNT   ; reset the VBLANK_TICK_COUNT cause we work in cycles of 8 vblanks
+      jsr read_input          ;we jump to read input every other time to make sure we dont mis an input
+      jsr move_player         ;if we dont do this the game feels unresponsif
       jsr read_input
       jsr reset_input
       jsr read_input
@@ -132,16 +140,16 @@ sta VBLANK_TICK_COUNT
     :
   no_vblank:
   
-  jmp forever
+  jmp forever                 ;go back to start of the loop
 .endproc
 
-.proc end_screen
-    jsr end_screen_main
-    jmp reset_game
-    rts 
+.proc end_screen              ;the game is over 
+    jsr end_screen_main       ;jump to the main function of the endscreen
+    jmp reset_game            ;reset the game
+
 .endproc
 
-
+; include all files
 .include "nmi.s"
 .include "pushBackgroundBuffer.s"
 

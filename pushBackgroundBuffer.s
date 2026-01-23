@@ -37,3 +37,15 @@
     :
     rts
 .endproc
+
+;register layout for pushing
+
+;x = CCNNNNYY
+;y = YYYXXXXX
+;a = TTTTTTTT
+
+; C = color pallet
+; N = nametable
+; Y = y location (2msb are in the x register 3lsb are in y register)
+; X = x location
+; T = tile index
