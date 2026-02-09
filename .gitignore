@@ -6,7 +6,9 @@
 *.DBG
 *.nes*
 
+*.code-workspace
+
 .DS_Store
-.vscode/
+.vscode/*
 .build/
 *.kate-swp
