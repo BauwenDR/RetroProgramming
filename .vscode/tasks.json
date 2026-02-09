@@ -4,7 +4,7 @@
       {
         "label": "Assemble and Link NES",
         "type": "shell",
-        "command": "C:\\cc65\\bin\\ca65",
+        "command": "ca65",
         "args": [
           "main.s",
           "-g",
@@ -20,7 +20,7 @@
       {
         "label": "Build NES",
         "type": "shell",
-        "command": "C:\\cc65\\bin\\ld65",
+        "command": "ld65",
         "args": [
           "-t", "nes",
           "-o", "build/main.nes",
