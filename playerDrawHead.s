@@ -72,15 +72,16 @@ cmp #$00    ; Right
 bne :++
     ldx OFFSET ;loads the right offset into x for the right body part ;head
     inc PLAYER_HEAD,x
-    bne :+
-        ldy OFFSET ;loads the right offset into x for the right body part ;head
+    bne :+ ; if overflow -> increment the last 2 bits of "PLAYER_LENGTH" that actually belong to the position
+        ldy OFFSET
+        ; 
         lda PLAYER_LENGTH,y
         and #$03
         clc
         adc #$01
         and #$03
         tax
-        lda #$FC
+        lda #$FC ; 11111100
         and PLAYER_LENGTH,y
         sta PLAYER_LENGTH,y
         txa
@@ -97,8 +98,8 @@ bne :++
     sec
     sbc #$01
     sta PLAYER_HEAD,x
-    bcs :+
-        ldy OFFSET     ;loads the right offset into x for the right snake
+    bcs :+  ; if overflow -> decrement the last 2 bits of "PLAYER_LENGTH" that actually belong to the position
+        ldy OFFSET
 
         lda PLAYER_LENGTH,y
         and #$03
@@ -123,8 +124,8 @@ bne :++
     clc
     adc #$20
     sta PLAYER_HEAD,x
-    bcc :+
-        ldy OFFSET      ;loads the right offset into x for the right snake
+    bcc :+  ; if overflow -> increment the last 2 bits of "PLAYER_LENGTH" that actually belong to the position
+        ldy OFFSET
 
         lda PLAYER_LENGTH,y
         and #$03
@@ -149,8 +150,8 @@ bne :++
     sec
     sbc #$20
     sta PLAYER_HEAD,x
-    bcs :+
-        ldy OFFSET       ;loads the right offset into x for the right snake
+    bcs :+ ; if overflow -> decrement the last 2 bits of "PLAYER_LENGTH" that actually belong to the position
+        ldy OFFSET
 
         lda PLAYER_LENGTH,y
         and #$03

@@ -1,4 +1,7 @@
-; Initialise rng
+; Pseudo random number generator using a linear feedback shift register to generate a sequence of "random" numbers.
+; The code used is adapted from the example found on https://www.nesdev.org/wiki/Random_number_generator
+
+; Initialise rng with an arbetrary number
 ldx #$14
 lda #$15 
 sta RANDOM_SEED

@@ -1,128 +1,126 @@
 .proc start_screen_main
-	jsr famistudio_music_stop
-	ldx #<music_data_swimming
-	ldy #>music_data_swimming
-	lda #0 ; PAL
-	jsr famistudio_init
+    jsr famistudio_music_stop      ; Stop any currently playing music
+    ldx #<music_data_swimming      ; Load low byte of music data address
+    ldy #>music_data_swimming      ; Load high byte of music data address
+    lda #0 ; PAL                   ; Set region mode to PAL (0)
+    jsr famistudio_init            ; Initialize the sound engine
 
-	ldx #<music_data_swimming
-	ldy #>music_data_swimming
-	lda #0
-	jsr famistudio_music_play
+    ldx #<music_data_swimming      ; Reload music data address for playback
+    ldy #>music_data_swimming
+    lda #0                         ; Select first track in the music data
+    jsr famistudio_music_play      ; Start playing the background music
 
     lda #$01
-    sta RIGHT_SCREEN
+    sta RIGHT_SCREEN               ; Flag to indicate the menu/right screen is active
 
-    jsr draw_names
-    jsr draw_4_player_snake
-    jsr draw_press_to_start
+    jsr draw_names                 ; Draw player names to the background
+    jsr draw_4_player_snake        ; Draw the decorative snakes for the menu
+    jsr draw_press_to_start        ; Draw the "Press Start" text
 
     forever:
-        jsr galois16
-        jsr read_input
-        ldx #$00
+        jsr galois16               ; Run random number generator to seed randomness
+        jsr read_input             ; Poll all connected controllers
+        ldx #$00                   ; Start checking from controller 0
         :
-            lda CONTROLLER1,x
-            and #%10000000
-            cmp #%10000000
+            lda CONTROLLER1,x      ; Load the button state for current controller
+            and #%10000000         ; Mask for the a button
+            cmp #%10000000         ; Check if a is pressed
             bne:+
-                rts 
+                rts                ; If pressed, exit start screen to begin game
             :
-            inx
-            cpx #$04
-        bne:-- 
-        jsr reset_input
-    jmp forever
+            inx                    ; Increment controller index
+            cpx #$04               ; Have we checked all 4 controllers?
+        bne:--                     ; If not, loop back to check next controller
+        jsr reset_input            ; Clear input buffer for next frame
+    jmp forever                    ; Keep looping until Start is pressed
     rts 
 .endproc
 
-
-
 .proc end_screen_main
-	jsr famistudio_music_stop
-	ldx #<music_data_swimming
-	ldy #>music_data_swimming
-	lda #0 ; PAL
-	jsr famistudio_init
+    jsr famistudio_music_stop      ; Stop game music
+    ldx #<music_data_swimming      ; Prepare start screen/end screen music
+    ldy #>music_data_swimming
+    lda #0 ; PAL
+    jsr famistudio_init            ; Re-init sound engine
 
-	ldx #<music_data_swimming
-	ldy #>music_data_swimming
-	lda #0
-	jsr famistudio_music_play
+    ldx #<music_data_swimming
+    ldy #>music_data_swimming
+    lda #0
+    jsr famistudio_music_play      ; Start end screen music
 
     lda #$01
-    sta RIGHT_SCREEN
-    jsr clean_sprites
+    sta RIGHT_SCREEN               ; Enable menu screen mode
+    jsr clean_sprites              ; Remove in-game snake sprites from screen
 
-    jsr draw_names
+    jsr draw_names                 ; Draw UI elements
     jsr draw_4_player_snake
-    jsr draw_play_again
+    jsr draw_play_again            ; Draw "Play Again?" prompt
 
-    jsr draw_is_the_winner
-    jsr wait_for_nmi
-    lda PLAYERS_DEAD
-    and #%11110000
-    cmp #%11100000              ;player 4
+    jsr draw_is_the_winner         ; Draw the static "is the winner" text
+    jsr wait_for_nmi               ; Sync with vertical blank
+    lda PLAYERS_DEAD               ; Load the death status bitmask
+    and #%11110000                 ; Mask out the death count, keep player bits
+    
+    cmp #%11100000                 ; Check if only Player 4 is not dead
+    bne:+
+        ldx #$25                   ; Background address high byte
+        ldy #$CC                   ; Background address low byte
+        lda #$B4                   ; Tile ID for "4"
+        jsr push_background_buffer ; Draw "4" in front of "is the winner"
+
+        jmp end_choise_winner      ; Skip other checks
+    :
+    cmp #%11010000                 ; Check if only Player 3 is not dead
     bne:+
         ldx #$25
         ldy #$CC
-        lda #$B4
+        lda #$B3                   ; Tile ID for "3"
         jsr push_background_buffer
 
         jmp end_choise_winner
     :
-    cmp #%11010000              ;player 3
+    cmp #%10110000                 ; Check if only Player 2 is not dead
     bne:+
         ldx #$25
         ldy #$CC
-        lda #$B3
+        lda #$B2                   ; Tile ID for "2"
         jsr push_background_buffer
 
         jmp end_choise_winner
     :
-    cmp #%10110000              ;player 2
+    cmp #%01110000                 ; Check if only Player 1 is not dead
     bne:+
         ldx #$25
         ldy #$CC
-        lda #$B2
-        jsr push_background_buffer
-
-        jmp end_choise_winner
-    :
-    cmp #%01110000              ;player 1
-    bne:+
-        ldx #$25
-        ldy #$CC
-        lda #$B1
+        lda #$B1                   ; Tile ID for "1"
         jsr push_background_buffer
 
         jmp end_choise_winner
     :
 
-    jsr draw_no_winner
+    jsr draw_no_winner             ; If no specific winner bitmask matched
 
     end_choise_winner:
 
-    jsr clean_upcrew
+    jsr clean_upcrew               ; Clean up temporary variables
     forever:
-        jsr read_input
+        jsr read_input             ; Wait for a player to restart the game
         ldx #$00
         :
             lda CONTROLLER1,x
             and #%10000000
             cmp #%10000000
             bne:+
-                rts 
+                rts                ; Exit end screen to restart
             :
             inx
             cpx #$04
         bne:-- 
         jsr reset_input
-    jmp forever
+    jmp forever                    ; Loop until Start is pressed
 
     rts 
 .endproc
-
 
 .proc clean_sprites
     lda #$00
@@ -140,6 +138,22 @@
 
     rts 
 .endproc
+
+;register layout for pushing
+
+;x = CCNNNNYY
+;y = YYYXXXXX
+;a = TTTTTTTT
+
+; C = color pallet
+; N = nametable
+; Y = y location (2msb are in the x register 3lsb are in y register)
+; X = x location
+; T = tile index
+
+;the next piece of code is generated with a python script where we input the string and it outputs the exact lines of code
+;the guide above is how the numbers are generated
+
 
 .proc draw_is_the_winner
     jsr wait_for_nmi
@@ -1131,15 +1145,5 @@
 
 
 
-    rts 
-.endproc
-
-.proc wait_for_nmi
-    lda #$00
-    sta VBLANK_OCCURED
-    vblank_wait:
-    lda VBLANK_OCCURED
-    cmp #$01
-    bne vblank_wait
     rts 
 .endproc

@@ -1,4 +1,11 @@
-; Calculate amount of times to shift right for last player location
+; Modify value of X register to OFFSET + BYTE_LENGTH and then load last the last byte of the players body into register A
+lda BYTE_LENGTH
+clc 
+adc OFFSET
+tax 
+lda PLAYER_BODY,x ; Load last byte of body into A
+
+; Calculate amount of times to shift right for last player location and extract LAST_MOVE_DIR
 ldy SHIFT_RIGHT_COUNT
 cpy #$00
 beq :++
@@ -11,7 +18,7 @@ beq :++
 and #$03    ; Extract last 2 bits
 sta LAST_MOVE_DIR
 
-; Shifting player body
+; Shifting player body (move all movement directions by two bits)
 ldx OFFSET
 asl PLAYER_BODY,x   ; Discard the first 2 bytes (last location)
 asl PLAYER_BODY,x
@@ -120,24 +127,6 @@ input:
     cmp #$FF                ; Test if input was valid
     beq no_input
 
-    lda BYTE_LENGTH
-    clc
-    adc OFFSET
-    tax
-
-    lda NEW_MOVE_DIR
-    ldy SHIFT_RIGHT_COUNT    ; Shift back n-1 times
-    cpy #$00
-    beq :++
-    :
-        asl
-        asl
-        dey
-        bne :-
-    :
-    ora PLAYER_BODY,x
-    sta PLAYER_BODY,x
-
     jmp input_end
 no_input:           ; No Button was pressed, continue in same direction
     lda BYTE_LENGTH
@@ -147,15 +136,25 @@ no_input:           ; No Button was pressed, continue in same direction
 
     lda LAST_MOVE_DIR
     sta NEW_MOVE_DIR
-    ldy SHIFT_RIGHT_COUNT     ; Shift back n-1 times
-    cpy #$00
-    beq :++
-    :
-        asl
-        asl
-        dey
-        bne :-
-    :
-    ora PLAYER_BODY,x
-    sta PLAYER_BODY,x
 input_end:
+
+; Once again we set X register equal to the last byte in the player body
+lda BYTE_LENGTH
+clc
+adc OFFSET
+tax
+
+; Put the value of NEW_MOVE_DIR in the corrent location
+lda NEW_MOVE_DIR
+ldy SHIFT_RIGHT_COUNT    ; Shift back n-1 times
+cpy #$00
+beq :++
+:
+    asl
+    asl
+    dey
+    bne :-
+:
+
+ora PLAYER_BODY,x
+sta PLAYER_BODY,x

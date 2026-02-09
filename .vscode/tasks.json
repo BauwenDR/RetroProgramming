@@ -9,7 +9,7 @@
           "main.s",
           "-g",
           "-o",
-          "main.o"
+          "build/main.o"
         ],
         "group": {
           "kind": "build",
@@ -23,9 +23,9 @@
         "command": "ld65",
         "args": [
           "-t", "nes",
-          "-o", "main.nes",
-          "main.o",
-          "--dbgfile", "main.dbg"
+          "-o", "build/main.nes",
+          "build/main.o",
+          "--dbgfile", "build/main.dbg"
         ],
         "group": "build",
         "dependsOn": "Assemble and Link NES",
