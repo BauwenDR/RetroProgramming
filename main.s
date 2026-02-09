@@ -98,7 +98,6 @@ start_delay:
 lda #$00
 sta VBLANK_TICK_COUNT
 
-
 ;main loop
 .proc forever
   jsr read_input 
@@ -118,7 +117,7 @@ sta VBLANK_TICK_COUNT
     cmp #$07                  ;if the VBlank tick count is 7
     bne:+
       lda PLAYERS_DEAD        ;load the player dead data
-      ;the 4 MSB are data for induvidual players and the 4 LSB are a count of the dead players
+      ;the 4 MSB are data for individual players and the 4 LSB are a count of the dead players
       and #%00001111          ;we need the count of dead players          
       cmp #$03                
       bcc:+                   ;if there are 3 players dead

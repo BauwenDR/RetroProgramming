@@ -1,7 +1,7 @@
 INPUT_RAM = $01
 
 ; File for handling input, the results of the methods can be found in the CONTROLLER1 to CONTROLLER4.
-; The code used is adapted from the 4-score example found on https://www.nesdev.org/wiki/Random_number_generator
+; The code used is adapted from the 4-score example found on https://www.nesdev.org/wiki/Four_player_adapters#Four_Score
 
 ; We read input and then 'and' the result with what was already present in the CONTROLLER memory address.
 ; Since we call this function as often as possible during downtime, we won't miss any input and will have all inputs that occured since last reset.

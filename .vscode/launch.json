@@ -4,14 +4,15 @@
         {
             "type": "alchemy65",
             "request": "launch",
+            "name": "Debug rom with mesen",
             "preLaunchTask": "Build NES",
             "suppressMultipleSessionWarning": false,
-            "romPath": "${workspaceFolder}/main.nes",
-            "dbgPath": "${workspaceFolder}/main.dbg",
-            "program": "mesen",
+            "romPath": "${workspaceFolder}/build/main.nes",
+            "dbgPath": "${workspaceFolder}/build/main.dbg",
+            "program": "${workspaceFolder}/launch-mesen.sh",
             "sourcePath": "${workspaceFolder}/",
             "stopOnEntry": false,
             "resetOnEntry": true
-        }
+        },
     ]
 }
