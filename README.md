@@ -1,5 +1,5 @@
 # 4 Player Snake Game
-A 4 player battle royal snake game snake game made for the Nintendo Entertainment System (NES). Built entirely using 6502 assembly.
+A 4 player battle royal snake game snake game made for the Nintendo Entertainment System (NES). Built entirely using 6502 assembly. Intended to be played using the 4score adapter.
 
 ![In game screenshot](./Media/NES-Snake.jpg)
 
