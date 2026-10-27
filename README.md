@@ -1,6 +1,8 @@
 # 4 Player Snake Game
 A 4 player battle royal snake game snake game made for the Nintendo Entertainment System (NES). Built entirely using 6502 assembly.
 
+![In game screenshot](./Media/NES-Snake.jpg)
+
 ## Team Members
 - Teun De Moor ([linkedin](https://www.linkedin.com/in/teun-de-moor-5423bb20a/))
 - Bauwen De Ron ([linkedin](https://www.linkedin.com/in/bauwen-de-ron/))
